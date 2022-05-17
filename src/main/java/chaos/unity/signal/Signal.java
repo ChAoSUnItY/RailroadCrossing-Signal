@@ -1,6 +1,5 @@
 package chaos.unity.signal;
 
-import chaos.unity.signal.client.particle.SignalParticles;
 import chaos.unity.signal.common.block.SignalBlocks;
 import chaos.unity.signal.common.blockentity.SignalBlockEntities;
 import chaos.unity.signal.common.item.SignalItems;
@@ -12,6 +11,6 @@ public class Signal implements ModInitializer {
         SignalItems.register();
         SignalBlocks.registerBlock();
         SignalBlockEntities.register();
-        SignalParticles.register();
+        SignalNetworking.register();
     }
 }

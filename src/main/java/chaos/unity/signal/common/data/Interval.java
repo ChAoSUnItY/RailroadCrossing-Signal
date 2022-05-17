@@ -1,6 +1,7 @@
 package chaos.unity.signal.common.data;
 
 import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import com.google.common.collect.ComparisonChain;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -10,8 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -23,6 +23,27 @@ import java.util.function.BiConsumer;
  */
 public record Interval(@NotNull BlockPos signalAPos, @NotNull BlockPos signalBPos,
                        @NotNull List<@NotNull BlockPos> intervalPath) {
+    public boolean isSignal(BlockPos pos) {
+        return pos.equals(signalAPos) || pos.equals(signalBPos);
+    }
+
+    public boolean isInIntervalPath(BlockPos pos) {
+        return Collections.binarySearch(intervalPath, pos) != -1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Interval interval = (Interval) o;
+        return signalAPos.equals(interval.signalAPos) && signalBPos.equals(interval.signalBPos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(signalAPos, signalBPos);
+    }
+
     public static Interval readNbt(NbtCompound nbt) {
         BlockPos signalAPos = NbtHelper.toBlockPos(nbt.getCompound("signal_a_pos")), signalBPos = NbtHelper.toBlockPos(nbt.getCompound("signal_b_pos"));
         List<BlockPos> intervalPath = new ArrayList<>();

@@ -1,18 +1,20 @@
 package chaos.unity.signal.client.particle;
 
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
+
+import java.awt.*;
 
 public final class SignalParticles {
-    public static final DefaultParticleType YELLOW_GLINT = FabricParticleTypes.simple();
-    public static final DefaultParticleType GREEN_GLINT = FabricParticleTypes.simple();
-    public static final DefaultParticleType RED_GLINT = FabricParticleTypes.simple();
+    // DUST INSTANCES
+    public static final ParticleEffect GREEN_DUST = new DustParticleEffect(fromColor(Color.GREEN.getRGB()), 1);
+    public static final ParticleEffect YELLOW_DUST = new DustParticleEffect(fromColor(Color.YELLOW.getRGB()), 1);
+    public static final ParticleEffect RED_DUST = new DustParticleEffect(fromColor(Color.RED.getRGB()), 1);
+    public static final ParticleEffect CYAN_DUST = new DustParticleEffect(fromColor(Color.CYAN.getRGB()), 1);
 
-    public static void register() {
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("signal", "yellow_glint"), YELLOW_GLINT);
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("signal", "green_glint"), GREEN_GLINT);
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("signal", "red_glint"), RED_GLINT);
+    private static Vec3f fromColor(int rgb) {
+        return new Vec3f(Vec3d.unpackRgb(rgb));
     }
 }

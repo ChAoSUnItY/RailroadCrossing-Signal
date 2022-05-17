@@ -144,12 +144,20 @@ public class RadioLinkerItem extends Item {
                     sbe1.pairedSignalPos = pos;
                     sbe2.pairedSignalPos = signalBindPos;
 
+                    var added = true;
+
                     if (world instanceof ServerWorld serverWorld) {
-                        var intervalData = serverWorld.getPersistentStateManager().getOrCreate(IntervalData::readNbt, IntervalData::new, "signal_intervals");
-                        intervalData.intervals.add(interval);
-                        intervalData.markDirty();
-                    } else if (world.isClient)
-                        player.sendMessage(new LiteralText("Successfully bind two signals as paired signal").formatted(Formatting.GREEN), false);
+                        var intervalData = IntervalData.getOrCreate(serverWorld);
+                        if (intervalData.addInterval(interval)) {
+                            intervalData.markDirty();
+                        } else {
+                            added = false;
+                        }
+                    }
+
+                    if (world.isClient)
+                        if (added) player.sendMessage(new LiteralText("Successfully bind two signals as paired signal").formatted(Formatting.GREEN), false);
+                        else player.sendMessage(new LiteralText("Failed to bind two signals as paired signal").formatted(Formatting.RED), false);
                 } else {
                     // Current session is not ended
                     if (world.isClient)
