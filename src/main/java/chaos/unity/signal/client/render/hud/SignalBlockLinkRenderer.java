@@ -14,6 +14,12 @@ public class SignalBlockLinkRenderer {
         if (sbe.railBindPos == null) {
             // Generates yellow glint particle at the center of current signal block
             world.addParticle(SignalParticles.YELLOW_GLINT, pos[0] + 0.5, pos[1] + 0.5, pos[2] + 0.5, 0, 0, 0);
+        } else if (sbe.pairedSignalPos != null) {
+            // Generates green glint particles at the center of current signal block and its paired companion signal block
+            var railBindPos = Utils.asIntArray(sbe.pairedSignalPos);
+
+            world.addParticle(SignalParticles.GREEN_GLINT, pos[0] + 0.5, pos[1] + 0.5, pos[2] + 0.5, 0, 0, 0);
+            world.addParticle(SignalParticles.GREEN_GLINT, railBindPos[0] + 0.5, railBindPos[1] + 0.5, railBindPos[2] + 0.5, 0, 0, 0);
         } else {
             // Generates green glint particles at the center of signal block and its bound rail block
             var railBindPos = Utils.asIntArray(sbe.railBindPos);

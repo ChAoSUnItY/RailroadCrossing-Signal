@@ -2,13 +2,16 @@ package chaos.unity.signal.common.item;
 
 import chaos.unity.signal.common.block.SignalBlock;
 import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.util.Utils;
+import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -48,7 +51,7 @@ public class RadioLinkerItem extends Item {
                     nbt.putIntArray("rail_bind_pos", Utils.asIntArray(pos));
 
                     if (world.isClient)
-                        context.getPlayer().sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
                 }
             } else if (nbt.contains("rail_bind_pos")) {
                 var railBindPos = Utils.fromIntArray(nbt.getIntArray("rail_bind_pos"));
@@ -64,7 +67,7 @@ public class RadioLinkerItem extends Item {
                     nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
 
                     if (world.isClient)
-                        context.getPlayer().sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
                 } else {
                     // Current session is not ended
                     if (world.isClient)
@@ -74,7 +77,7 @@ public class RadioLinkerItem extends Item {
                 // Create a new session
                 nbt.putIntArray("rail_bind_pos", Utils.asIntArray(pos));
                 if (world.isClient)
-                    context.getPlayer().sendMessage(new LiteralText("Starts a new binding session"), false);
+                    player.sendMessage(new LiteralText("Starts a new binding session"), false);
             }
 
             return ActionResult.SUCCESS;
@@ -98,7 +101,7 @@ public class RadioLinkerItem extends Item {
                     nbt.remove("rail_bind_pos");
 
                     if (world.isClient)
-                        context.getPlayer().sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
                 }
             } else if (nbt.contains("signal_bind_pos")) {
                 var signalBindPos = Utils.fromIntArray(nbt.getIntArray("signal_bind_pos"));
@@ -114,7 +117,39 @@ public class RadioLinkerItem extends Item {
                     nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
 
                     if (world.isClient)
-                        context.getPlayer().sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                } else if (world.getBlockEntity(signalBindPos) instanceof SignalBlockEntity sbe1 && world.getBlockEntity(pos) instanceof SignalBlockEntity sbe2) {
+                    if (sbe1.railBindPos == null) {
+                        if (world.isClient)
+                            player.sendMessage(new LiteralText("Previous signal is not bound to any rail").formatted(Formatting.RED), false);
+                        return ActionResult.PASS;
+                    } else if (sbe2.railBindPos == null) {
+                        if (world.isClient)
+                            player.sendMessage(new LiteralText("Current signal is not bound to any rail").formatted(Formatting.RED), false);
+                        return ActionResult.PASS;
+                    }
+
+                    var interval = Interval.getInterval(world, sbe1, sbe2);
+
+                    if (interval == null) {
+                        // Invalid interval
+                        if (world.isClient)
+                            player.sendMessage(new LiteralText("Invalid signal interval").formatted(Formatting.RED), false);
+                        return ActionResult.PASS;
+                    }
+
+                    // Reset current session
+                    nbt.remove("signal_bind_pos");
+
+                    sbe1.pairedSignalPos = pos;
+                    sbe2.pairedSignalPos = signalBindPos;
+
+                    if (world instanceof ServerWorld serverWorld) {
+                        var intervalData = serverWorld.getPersistentStateManager().getOrCreate(IntervalData::readNbt, IntervalData::new, "signal_intervals");
+                        intervalData.intervals.add(interval);
+                        intervalData.markDirty();
+                    } else if (world.isClient)
+                        player.sendMessage(new LiteralText("Successfully bind two signals as paired signal").formatted(Formatting.GREEN), false);
                 } else {
                     // Current session is not ended
                     if (world.isClient)
@@ -124,7 +159,7 @@ public class RadioLinkerItem extends Item {
                 // Create a new session
                 nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
                 if (world.isClient)
-                    context.getPlayer().sendMessage(new LiteralText("Starts a new binding session"), false);
+                    player.sendMessage(new LiteralText("Starts a new binding session"), false);
             }
 
             return ActionResult.SUCCESS;
