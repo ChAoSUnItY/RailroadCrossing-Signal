@@ -1,17 +1,18 @@
 package chaos.unity.signal.common.item;
 
+import chaos.unity.signal.SignalNetworking;
 import chaos.unity.signal.common.block.SignalBlock;
 import chaos.unity.signal.common.blockentity.SignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.util.Utils;
-import chaos.unity.signal.common.world.IntervalData;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -147,21 +148,15 @@ public class RadioLinkerItem extends Item {
                     sbe1.markDirty();
                     sbe2.markDirty();
 
-                    var added = true;
-
-                    if (world instanceof ServerWorld serverWorld) {
-                        // TODO: Use packet to request addition of interval data
-                        var intervalData = IntervalData.getOrCreate(serverWorld);
-                        if (intervalData.addInterval(interval)) {
-                            intervalData.markDirty();
-                        } else {
-                            added = false;
-                        }
-                    }
+                    var buf = PacketByteBufs.create();
+                    buf.writeBlockPos(interval.signalPosA());
+                    buf.writeBlockPos(interval.signalPosB());
+                    buf.writeInt(interval.intervalPath().size());
+                    for (var pathPos : interval.intervalPath())
+                        buf.writeBlockPos(pathPos);
 
                     if (world.isClient)
-                        if (added) player.sendMessage(new LiteralText("Successfully bind two signals as paired signal").formatted(Formatting.GREEN), false);
-                        else player.sendMessage(new LiteralText("Failed to bind two signals as paired signal").formatted(Formatting.RED), false);
+                        ClientPlayNetworking.send(SignalNetworking.REQUEST_ADD_INTERVAL, buf);
                 } else {
                     // Current session is not ended
                     if (world.isClient)

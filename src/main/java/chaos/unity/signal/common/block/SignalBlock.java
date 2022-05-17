@@ -8,10 +8,8 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +24,10 @@ public class SignalBlock extends Block implements BlockEntityProvider {
             var removedInterval = IntervalData.getOrCreate(serverWorld).removeBySignal(pos);
 
             if (removedInterval != null) {
-                if (world.getBlockEntity(removedInterval.signalAPos()) instanceof SignalBlockEntity sbe) {
+                if (world.getBlockEntity(removedInterval.signalPosA()) instanceof SignalBlockEntity sbe) {
                     sbe.pairedSignalPos = null;
                 }
-                if (world.getBlockEntity(removedInterval.signalBPos()) instanceof  SignalBlockEntity sbe) {
+                if (world.getBlockEntity(removedInterval.signalPosB()) instanceof  SignalBlockEntity sbe) {
                     sbe.pairedSignalPos = null;
                 }
             }
