@@ -1,7 +1,6 @@
 package chaos.unity.signal.common.data;
 
 import chaos.unity.signal.common.blockentity.SignalBlockEntity;
-import com.google.common.collect.ComparisonChain;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -17,14 +16,14 @@ import java.util.function.BiConsumer;
 /**
  * Interval must be a straight line or a straight slope, curved line is not supported.
  *
- * @param signalAPos
- * @param signalBPos
+ * @param signalPosA
+ * @param signalPosB
  * @param intervalPath
  */
-public record Interval(@NotNull BlockPos signalAPos, @NotNull BlockPos signalBPos,
+public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
                        @NotNull List<@NotNull BlockPos> intervalPath) {
     public boolean isSignal(BlockPos pos) {
-        return pos.equals(signalAPos) || pos.equals(signalBPos);
+        return pos.equals(signalPosA) || pos.equals(signalPosB);
     }
 
     public boolean isInIntervalPath(BlockPos pos) {
@@ -36,12 +35,12 @@ public record Interval(@NotNull BlockPos signalAPos, @NotNull BlockPos signalBPo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Interval interval = (Interval) o;
-        return signalAPos.equals(interval.signalAPos) && signalBPos.equals(interval.signalBPos);
+        return signalPosA.equals(interval.signalPosA) && signalPosB.equals(interval.signalPosB);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(signalAPos, signalBPos);
+        return Objects.hash(signalPosA, signalPosB);
     }
 
     public static Interval readNbt(NbtCompound nbt) {
@@ -57,8 +56,8 @@ public record Interval(@NotNull BlockPos signalAPos, @NotNull BlockPos signalBPo
 
     public NbtCompound writeNbt() {
         var compound = new NbtCompound();
-        compound.put("signal_a_pos", NbtHelper.fromBlockPos(signalAPos));
-        compound.put("signal_b_pos", NbtHelper.fromBlockPos(signalBPos));
+        compound.put("signal_a_pos", NbtHelper.fromBlockPos(signalPosA));
+        compound.put("signal_b_pos", NbtHelper.fromBlockPos(signalPosB));
         var intervalPath = new NbtList();
 
         for (var pos : this.intervalPath) {
