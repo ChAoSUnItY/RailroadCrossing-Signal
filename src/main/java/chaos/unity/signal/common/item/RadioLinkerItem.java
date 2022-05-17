@@ -144,9 +144,13 @@ public class RadioLinkerItem extends Item {
                     sbe1.pairedSignalPos = pos;
                     sbe2.pairedSignalPos = signalBindPos;
 
+                    sbe1.markDirty();
+                    sbe2.markDirty();
+
                     var added = true;
 
                     if (world instanceof ServerWorld serverWorld) {
+                        // TODO: Use packet to request addition of interval data
                         var intervalData = IntervalData.getOrCreate(serverWorld);
                         if (intervalData.addInterval(interval)) {
                             intervalData.markDirty();
