@@ -20,15 +20,20 @@ public class SignalBlock extends Block implements BlockEntityProvider {
 
     @Override
     public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-        if (world instanceof ServerWorld serverWorld) {
-            var removedInterval = IntervalData.getOrCreate(serverWorld).removeBySignal(pos);
+        if (world instanceof ServerWorld serverWorld && serverWorld.getBlockEntity(pos) instanceof SignalBlockEntity sbe && sbe.pairedSignalPos != null) {
+            var intervalData = IntervalData.getOrCreate(serverWorld);
+            var removedInterval = intervalData.removeBySignal(pos);
 
             if (removedInterval != null) {
-                if (world.getBlockEntity(removedInterval.signalPosA()) instanceof SignalBlockEntity sbe) {
-                    sbe.pairedSignalPos = null;
+                intervalData.markDirty();
+
+                if (world.getBlockEntity(removedInterval.signalPosA()) instanceof SignalBlockEntity sbeA) {
+                    sbeA.pairedSignalPos = null;
+                    sbeA.markDirty();
                 }
-                if (world.getBlockEntity(removedInterval.signalPosB()) instanceof  SignalBlockEntity sbe) {
-                    sbe.pairedSignalPos = null;
+                if (world.getBlockEntity(removedInterval.signalPosB()) instanceof  SignalBlockEntity sbeB) {
+                    sbeB.pairedSignalPos = null;
+                    sbeB.markDirty();
                 }
             }
         }

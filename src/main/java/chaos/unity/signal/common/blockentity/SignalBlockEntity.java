@@ -14,37 +14,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class SignalBlockEntity extends BlockEntity implements BlockEntityTicker<SignalBlockEntity> {
+public class SignalBlockEntity extends BlockEntity {
     public BlockPos railBindPos;
     public BlockPos pairedSignalPos;
 
     public SignalBlockEntity(BlockPos pos, BlockState state) {
         super(SignalBlockEntities.SIGNAL_BLOCK_ENTITY, pos, state);
-    }
-
-    @Override
-    public void tick(World world, BlockPos pos, BlockState state, SignalBlockEntity blockEntity) {
-        if (!world.isClient) {
-            if (pairedSignalPos != null && !world.getBlockState(pairedSignalPos).isOf(SignalBlocks.SIGNAL_BLOCK)) {
-                // Paired signal block is destroyed
-                pairedSignalPos = null;
-            }
-
-            if (railBindPos != null && !(world.getBlockState(railBindPos).getBlock() instanceof AbstractRailBlock)) {
-                // Bound rail is destroyed, this will trigger cancellation of interval if there's paired signal
-                railBindPos = null;
-
-                if (pairedSignalPos != null) {
-                    if (world.getBlockState(pairedSignalPos).isOf(SignalBlocks.SIGNAL_BLOCK)) {
-                        // Paired signal exists
-                    } else {
-
-                    }
-                    // Cancel the interval entry from server
-                    var pairedSignalBlockEntity = world.getBlockEntity(pairedSignalPos);
-                }
-            }
-        }
     }
 
     @Override

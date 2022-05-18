@@ -9,7 +9,7 @@ import net.minecraft.util.registry.Registry;
 public final class SignalBlocks {
     public static final SignalBlock SIGNAL_BLOCK = new SignalBlock();
 
-    public static void registerBlock() {
+    public static void register() {
         Registry.register(Registry.BLOCK, new Identifier("signal", "signal_block"), SIGNAL_BLOCK);
         Registry.register(Registry.ITEM, new Identifier("signal", "signal_block"), new BlockItem(SIGNAL_BLOCK, new FabricItemSettings().group(SignalItemGroups.SIGNAL_ITEM_GROUP)));
     }

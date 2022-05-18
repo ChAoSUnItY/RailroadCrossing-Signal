@@ -1,12 +1,14 @@
 package chaos.unity.signal;
 
 import chaos.unity.signal.client.particle.SignalParticles;
+import chaos.unity.signal.common.blockentity.SignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
@@ -24,36 +26,61 @@ import java.util.List;
 public final class SignalNetworking {
     // CLIENT 2 SERVER
     public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("signal", "request_add_interval");
-    public static final Identifier REQUEST_HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("signal", "request_highlight_interval_instance");
+    public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("signal", "request_highlight_signals");
     // SERVER 2 CLIENT
     public static final Identifier CALLBACK_ADD_RESULT = new Identifier("signal", "callback_add_result");
+    public static final Identifier HIGHLIGHT_SIGNAL_NO_BOUND = new Identifier("signal", "highlight_signal_no_bound");
+    public static final Identifier HIGHLIGHT_SIGNAL = new Identifier("signal", "highlight_signal");
     public static final Identifier HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("signal", "highlight_interval_instance");
 
     public static void register() {
-        ServerPlayNetworking.registerGlobalReceiver(REQUEST_HIGHLIGHT_INTERVAL_INSTANCE, SignalNetworking::requestHighlightIntervalInstance);
+        ServerPlayNetworking.registerGlobalReceiver(REQUEST_HIGHLIGHT_SIGNALS, SignalNetworking::requestHighlightSignals);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_ADD_INTERVAL, SignalNetworking::requestAddInterval);
 
+        ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL_NO_BOUND, SignalNetworking::highlightSignalNoBound);
+        ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL, SignalNetworking::highlightSignal);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_INTERVAL_INSTANCE, SignalNetworking::highlightIntervalInstance);
         ClientPlayNetworking.registerGlobalReceiver(CALLBACK_ADD_RESULT, SignalNetworking::callbackAddResult);
     }
 
-    private static void requestHighlightIntervalInstance(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+    private static void requestHighlightSignals(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         var signalPos = buf.readBlockPos();
-        var interval = IntervalData.getOrCreate(player.getWorld()).getBySignal(signalPos);
+        var world = player.getEntityWorld();
 
-        if (interval != null) {
-            var responseBuf = PacketByteBufs.create();
+        server.execute(() -> {
+            if (world.getBlockEntity(signalPos) instanceof SignalBlockEntity sbe) {
+                if (sbe.pairedSignalPos != null) {
+                    var interval = IntervalData.getOrCreate(player.getWorld()).getBySignal(signalPos);
 
-            responseBuf.writeBlockPos(interval.signalPosA())
-                    .writeBlockPos(interval.signalPosB())
-                    .writeInt(interval.intervalPath().size());
+                    if (interval != null) {
+                        var responseBuf = PacketByteBufs.create();
 
-            for (var pos : interval.intervalPath()) {
-                responseBuf.writeBlockPos(pos);
+                        responseBuf.writeBlockPos(interval.signalPosA())
+                                .writeBlockPos(interval.signalPosB())
+                                .writeInt(interval.intervalPath().size());
+
+                        for (var pos : interval.intervalPath()) {
+                            responseBuf.writeBlockPos(pos);
+                        }
+
+                        responseSender.sendPacket(HIGHLIGHT_INTERVAL_INSTANCE, responseBuf);
+                    }
+                } else if (sbe.railBindPos != null && world.getBlockState(sbe.railBindPos).getBlock() instanceof AbstractRailBlock) {
+                    var responseBuf = PacketByteBufs.create();
+
+                    responseBuf.writeBlockPos(signalPos)
+                            .writeBlockPos(sbe.railBindPos);
+
+                    responseSender.sendPacket(HIGHLIGHT_SIGNAL, responseBuf);
+                } else {
+                    var responseBuf = PacketByteBufs.create();
+
+                    responseBuf.writeBlockPos(signalPos);
+
+                    responseSender.sendPacket(HIGHLIGHT_SIGNAL_NO_BOUND, responseBuf);
+                }
             }
-
-            responseSender.sendPacket(HIGHLIGHT_INTERVAL_INSTANCE, responseBuf);
-        }
+        });
     }
 
     private static void requestAddInterval(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
@@ -67,6 +94,26 @@ public final class SignalNetworking {
         var responseBuf = PacketByteBufs.create();
         responseBuf.writeBoolean(result);
         responseSender.sendPacket(CALLBACK_ADD_RESULT, responseBuf);
+    }
+
+    private static void highlightSignalNoBound(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        var signalPos = buf.readBlockPos();
+
+        if (client.world != null) {
+            client.execute(() -> client.world.addParticle(SignalParticles.RED_DUST, signalPos.getX() + .5, signalPos.getY() + .8, signalPos.getZ() + .5, 0, 0, 0));
+        }
+    }
+
+    private static void highlightSignal(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        var signalPos = buf.readBlockPos();
+        var railPos = buf.readBlockPos();
+
+        if (client.world != null) {
+            client.execute(() -> {
+                client.world.addParticle(SignalParticles.CYAN_DUST, signalPos.getX() + .5, signalPos.getY() + .8, signalPos.getZ() + .5, 0, 0, 0);
+                client.world.addParticle(SignalParticles.GREEN_DUST, railPos.getX() + .5, railPos.getY() + .5, railPos.getZ() + .5, 0, 0, 0);
+            });
+        }
     }
 
     private static void highlightIntervalInstance(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

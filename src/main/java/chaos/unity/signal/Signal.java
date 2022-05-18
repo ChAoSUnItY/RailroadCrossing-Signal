@@ -9,7 +9,7 @@ public class Signal implements ModInitializer {
     @Override
     public void onInitialize() {
         SignalItems.register();
-        SignalBlocks.registerBlock();
+        SignalBlocks.register();
         SignalBlockEntities.register();
         SignalNetworking.register();
     }
