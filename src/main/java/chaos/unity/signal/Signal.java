@@ -4,6 +4,7 @@ import chaos.unity.signal.common.block.SignalBlocks;
 import chaos.unity.signal.common.blockentity.SignalBlockEntities;
 import chaos.unity.signal.common.item.SignalItems;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.world.WorldEvents;
 
 public class Signal implements ModInitializer {
     @Override

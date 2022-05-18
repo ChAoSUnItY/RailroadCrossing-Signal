@@ -53,6 +53,13 @@ public class IntervalData extends PersistentState {
         return null;
     }
 
+    public @Nullable Interval removeByIntervalPath(BlockPos pos) {
+        for (var i = 0; i < intervals.size(); i++)
+            if (intervals.get(i).isInIntervalPath(pos))
+                return intervals.remove(i);
+        return null;
+    }
+
     public static IntervalData readNbt(NbtCompound nbt) {
         List<Interval> intervals = new ArrayList<>();
 

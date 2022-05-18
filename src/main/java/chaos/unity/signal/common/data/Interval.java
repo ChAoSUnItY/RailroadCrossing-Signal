@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,22 @@ import java.util.function.BiConsumer;
  */
 public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
                        @NotNull List<@NotNull BlockPos> intervalPath) {
+    /**
+     * Unbind all signal instances, this does not unbind signal instances' rail bound pos
+     * @param serverWorld
+     */
+    public void unbindAllRelatives(final ServerWorld serverWorld) {
+        if (serverWorld.getBlockEntity(signalPosA) instanceof SignalBlockEntity sbe) {
+            sbe.pairedSignalPos = null;
+            sbe.markDirty();
+        }
+
+        if (serverWorld.getBlockEntity(signalPosB) instanceof SignalBlockEntity sbe) {
+            sbe.pairedSignalPos = null;
+            sbe.markDirty();
+        }
+    }
+
     public boolean isSignal(BlockPos pos) {
         return pos.equals(signalPosA) || pos.equals(signalPosB);
     }
