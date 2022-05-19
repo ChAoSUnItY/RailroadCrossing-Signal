@@ -4,7 +4,9 @@ import java.awt.*;
 
 public enum SignalMode {
     BLINK_RED(Color.RED),
+    RED(Color.RED),
     BLINK_YELLOW(Color.YELLOW),
+    YELLOW(Color.YELLOW),
     GREEN(Color.GREEN);
 
     public static final SignalMode[] values = values();

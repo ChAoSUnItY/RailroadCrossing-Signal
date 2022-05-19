@@ -48,14 +48,14 @@ public class IntervalData extends PersistentState {
 
     public @Nullable Interval getByIntervalPath(BlockPos pos) {
         for (Interval interval : intervals)
-            if (Collections.binarySearch(interval.intervalPath(), pos) != -1)
+            if (interval.intervalPath().contains(pos))
                 return interval;
         return null;
     }
 
     public @Nullable Interval removeByIntervalPath(BlockPos pos) {
         for (var i = 0; i < intervals.size(); i++)
-            if (intervals.get(i).isInIntervalPath(pos))
+            if (intervals.get(i).intervalPath().contains(pos))
                 return intervals.remove(i);
         return null;
     }

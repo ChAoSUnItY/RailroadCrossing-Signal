@@ -2,33 +2,39 @@ package chaos.unity.signal.common.data;
 
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
  * Interval must be a straight line or a straight slope, curved line is not supported.
  *
- * @param signalPosA
- * @param signalPosB
- * @param intervalPath
+ * @param signalPosA signal A's {@link BlockPos}
+ * @param signalPosB signal B's {@link BlockPos}
+ * @param intervalPath all {@link BlockPos} of the rail blocks in the interval path
+ * @param blockingMinecarts used in runtime only, for signal checking
  */
 public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
-                       @NotNull List<@NotNull BlockPos> intervalPath) {
+                       @NotNull List<@NotNull BlockPos> intervalPath,
+                       @NotNull Set<@NotNull AbstractMinecartEntity> blockingMinecarts) {
+    public Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
+                    @NotNull List<@NotNull BlockPos> intervalPath) {
+        this(signalPosA, signalPosB, intervalPath, new HashSet<>());
+    }
+
     /**
      * Unbind all signal instances, this does not unbind signal instances' rail bound pos
      */
-    public void unbindAllRelatives(final World world) {
+    public void unbindAllRelatives(final ServerWorld world) {
         if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
             sbe.mode = SignalMode.BLINK_RED;
@@ -38,6 +44,42 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
             sbe.mode = SignalMode.BLINK_RED;
+            sbe.markDirtyAndSync();
+        }
+    }
+
+    public void markBlocked(final ServerWorld world) {
+        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+            sbe.mode = SignalMode.RED;
+            sbe.markDirtyAndSync();
+        }
+
+        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+            sbe.mode = SignalMode.RED;
+            sbe.markDirtyAndSync();
+        }
+    }
+
+    public void markMoving(final ServerWorld world) {
+        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+            sbe.mode = SignalMode.YELLOW;
+            sbe.markDirtyAndSync();
+        }
+
+        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+            sbe.mode = SignalMode.YELLOW;
+            sbe.markDirtyAndSync();
+        }
+    }
+
+    public void markCleared(final ServerWorld world) {
+        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+            sbe.mode = SignalMode.GREEN;
+            sbe.markDirtyAndSync();
+        }
+
+        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+            sbe.mode = SignalMode.GREEN;
             sbe.markDirtyAndSync();
         }
     }
