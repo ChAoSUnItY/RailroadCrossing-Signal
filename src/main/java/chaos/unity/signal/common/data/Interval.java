@@ -10,6 +10,8 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,13 +57,12 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
     public void markBlocked(final ServerWorld world, final AbstractMinecartEntity minecartEntity) {
         entityStatus.minecartEntities.compute(minecartEntity, (k, v) -> EntityStatus.Status.BLOCKING);
 
-        // If there's already at least one minecart blocking the interval, then skip the changing
-        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+        if (!entityStatus.signalForceLockA && world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
             sbe.mode = SignalMode.RED;
             sbe.markDirtyAndSync();
         }
 
-        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+        if (!entityStatus.signalForceLockB && world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
             sbe.mode = SignalMode.RED;
             sbe.markDirtyAndSync();
         }
@@ -71,9 +72,31 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         entityStatus.minecartEntities.compute(minecartEntity, (k, v) -> EntityStatus.Status.MOVING);
 
         // If there's already at least one minecart blocking the interval, then skip the changing
-        if (!entityStatus.isBlocked()) {
+        if (entityStatus.isBlocked())
+            return;
+
+        // Check which signal the minecart is approaching, the light of signal which minecart is approaching will turn into red,
+        // and the other signal's light will turn into yellow
+        var minecartPos = new BlockPos(minecartEntity.getPos());
+        var direction = minecartEntity.getMovementDirection();
+        var commonAxis = intervalPath.get(0).getX() == intervalPath.get(intervalPath.size() - 1).getX() ? Direction.Axis.X : Direction.Axis.Z;
+        boolean isApproachingSignalA = commonAxis == Direction.Axis.X
+                ? signalPosA.getZ() - minecartPos.getZ() > 0 ? direction == Direction.NORTH : direction == Direction.SOUTH
+                : signalPosA.getX() - minecartPos.getX() > 0 ? direction == Direction.WEST : direction == Direction.EAST;
+
+        if (isApproachingSignalA) {
             if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
                 sbe.mode = SignalMode.YELLOW;
+                sbe.markDirtyAndSync();
+            }
+
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+                sbe.mode = SignalMode.RED;
+                sbe.markDirtyAndSync();
+            }
+        } else {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+                sbe.mode = SignalMode.RED;
                 sbe.markDirtyAndSync();
             }
 
@@ -88,7 +111,7 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         entityStatus.minecartEntities.remove(minecartEntity);
 
         // If there's already at least one minecart blocking the interval, then skip the changing
-        if (!entityStatus.isBlocked()) {
+        if (!entityStatus.isBlocked() && entityStatus.minecartEntities.isEmpty()) {
             if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
                 sbe.mode = SignalMode.GREEN;
                 sbe.markDirtyAndSync();
@@ -226,6 +249,8 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
 
     static class EntityStatus {
         public final Object2ObjectOpenHashMap<AbstractMinecartEntity, Status> minecartEntities = new Object2ObjectOpenHashMap<>();
+        public boolean signalForceLockA;
+        public boolean signalForceLockB;
 
         /**
          * Checks if there's one or more minecart(s) blocking the interval.
