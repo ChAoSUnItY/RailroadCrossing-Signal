@@ -1,6 +1,7 @@
 package chaos.unity.signal.common.data;
 
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -12,23 +13,26 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
  * Interval must be a straight line or a straight slope, curved line is not supported.
  *
- * @param signalPosA signal A's {@link BlockPos}
- * @param signalPosB signal B's {@link BlockPos}
+ * @param signalPosA   signal A's {@link BlockPos}
+ * @param signalPosB   signal B's {@link BlockPos}
  * @param intervalPath all {@link BlockPos} of the rail blocks in the interval path
- * @param blockingMinecarts used in runtime only, for signal checking
+ * @param entityStatus used in runtime only, for signal checking
  */
 public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
                        @NotNull List<@NotNull BlockPos> intervalPath,
-                       @NotNull Set<@NotNull AbstractMinecartEntity> blockingMinecarts) {
+                       @NotNull Interval.EntityStatus entityStatus) {
     public Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
                     @NotNull List<@NotNull BlockPos> intervalPath) {
-        this(signalPosA, signalPosB, intervalPath, new HashSet<>());
+        this(signalPosA, signalPosB, intervalPath, new EntityStatus());
     }
 
     /**
@@ -48,7 +52,10 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         }
     }
 
-    public void markBlocked(final ServerWorld world) {
+    public void markBlocked(final ServerWorld world, final AbstractMinecartEntity minecartEntity) {
+        entityStatus.minecartEntities.compute(minecartEntity, (k, v) -> EntityStatus.Status.BLOCKING);
+
+        // If there's already at least one minecart blocking the interval, then skip the changing
         if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
             sbe.mode = SignalMode.RED;
             sbe.markDirtyAndSync();
@@ -60,27 +67,37 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         }
     }
 
-    public void markMoving(final ServerWorld world) {
-        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
-            sbe.mode = SignalMode.YELLOW;
-            sbe.markDirtyAndSync();
-        }
+    public void markMoving(final ServerWorld world, final AbstractMinecartEntity minecartEntity) {
+        entityStatus.minecartEntities.compute(minecartEntity, (k, v) -> EntityStatus.Status.MOVING);
 
-        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
-            sbe.mode = SignalMode.YELLOW;
-            sbe.markDirtyAndSync();
+        // If there's already at least one minecart blocking the interval, then skip the changing
+        if (!entityStatus.isBlocked()) {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+                sbe.mode = SignalMode.YELLOW;
+                sbe.markDirtyAndSync();
+            }
+
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+                sbe.mode = SignalMode.YELLOW;
+                sbe.markDirtyAndSync();
+            }
         }
     }
 
-    public void markCleared(final ServerWorld world) {
-        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
-            sbe.mode = SignalMode.GREEN;
-            sbe.markDirtyAndSync();
-        }
+    public void markCleared(final ServerWorld world, final AbstractMinecartEntity minecartEntity) {
+        entityStatus.minecartEntities.remove(minecartEntity);
 
-        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
-            sbe.mode = SignalMode.GREEN;
-            sbe.markDirtyAndSync();
+        // If there's already at least one minecart blocking the interval, then skip the changing
+        if (!entityStatus.isBlocked()) {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+                sbe.mode = SignalMode.GREEN;
+                sbe.markDirtyAndSync();
+            }
+
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+                sbe.mode = SignalMode.GREEN;
+                sbe.markDirtyAndSync();
+            }
         }
     }
 
@@ -205,5 +222,23 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         }
 
         return intervalPath;
+    }
+
+    static class EntityStatus {
+        public final Object2ObjectOpenHashMap<AbstractMinecartEntity, Status> minecartEntities = new Object2ObjectOpenHashMap<>();
+
+        /**
+         * Checks if there's one or more minecart(s) blocking the interval.
+         *
+         * @return true if there is at least one minecart is blocking the interval.
+         */
+        public boolean isBlocked() {
+            return minecartEntities.containsValue(Status.BLOCKING);
+        }
+
+        enum Status {
+            BLOCKING,
+            MOVING
+        }
     }
 }

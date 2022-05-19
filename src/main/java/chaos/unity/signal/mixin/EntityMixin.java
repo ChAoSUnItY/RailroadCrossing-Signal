@@ -23,13 +23,13 @@ public abstract class EntityMixin {
 
     @Inject(method = "setRemoved", at = @At("HEAD"))
     public void injectSetRemove(Entity.RemovalReason reason, CallbackInfo ci) {
-        if (((Entity) (Object) this) instanceof AbstractMinecartEntity && getWorld() instanceof ServerWorld world) {
+        if (((Entity) (Object) this) instanceof AbstractMinecartEntity minecartEntity && getWorld() instanceof ServerWorld world) {
             var pos = new BlockPos(getPos());
             var intervalData = IntervalData.getOrCreate(world);
             var interval = intervalData.getByIntervalPath(pos);
 
             if (interval != null) {
-                interval.markCleared(world);
+                interval.markCleared(world, minecartEntity);
             }
         }
     }

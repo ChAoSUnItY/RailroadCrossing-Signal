@@ -34,12 +34,12 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
             if (interval != null) {
                 var velocity = getVelocity();
 
-                if (velocity.x < 0.001 && velocity.y < 0.001 && velocity.z < 0.001) {
+                if (Math.abs(velocity.x) < 0.001 && Math.abs(velocity.y) < 0.001 && Math.abs(velocity.z) < 0.001) {
                     // Mark interval is blocked by at least 1 cart
-                    interval.markBlocked(world);
+                    interval.markBlocked(world, (AbstractMinecartEntity) (Object) this);
                 } else {
                     // Mark interval has at least 1 cart moving inside
-                    interval.markMoving(world);
+                    interval.markMoving(world, (AbstractMinecartEntity) (Object) this);
                 }
             } else {
                 // Tracks last pos is in any interval, if yes, then we can conclude that this cart just leaved the interval
@@ -47,7 +47,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
                 interval = intervalData.getByIntervalPath(lastPos);
 
                 if (interval != null) {
-                    interval.markCleared(world);
+                    interval.markCleared(world, (AbstractMinecartEntity) (Object) this);
                 }
             }
         }
