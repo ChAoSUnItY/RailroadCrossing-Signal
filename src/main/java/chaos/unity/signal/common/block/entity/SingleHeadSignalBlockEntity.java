@@ -13,6 +13,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
@@ -49,21 +50,24 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
     }
 
     public @Nullable BlockPos locateRail() {
-        var pos = getPos().mutableCopy();
-        int my = pos.getY() - 5, mx = pos.getX() + 2, mz = pos.getZ() + 2;
-        int ox = pos.getX() - 2, oz = pos.getZ() - 2;
+        if (world == null)
+            return null;
 
-        for (int y = pos.getY() + 1; y > my; y--) {
-            pos.setY(y);
+        var pos = getPos().mutableCopy().move(0, 1, 0);
 
-            for (int x = ox; x < mx; x++) {
-                pos.setX(x);
+        for (int y = 0; y < 5; y++) {
+            pos.move(0 , -1, 0);
 
-                for (int z = oz; z < mz; z++) {
-                    pos.setZ(z);
+            if (world.getBlockState(pos).getBlock() instanceof AbstractRailBlock) {
+                return pos.toImmutable();
+            }
 
-                    if (world.getBlockState(pos).getBlock() instanceof AbstractRailBlock) {
-                        return pos.toImmutable();
+            for (Direction direction : Direction.Type.HORIZONTAL) {
+                BlockPos currentPos;
+
+                for (var i = 1; i <= 2; i++) {
+                    if (world.getBlockState((currentPos = pos.offset(direction, i))).getBlock() instanceof AbstractRailBlock) {
+                        return currentPos;
                     }
                 }
             }
