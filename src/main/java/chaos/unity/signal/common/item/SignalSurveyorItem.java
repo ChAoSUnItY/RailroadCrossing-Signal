@@ -6,18 +6,21 @@ import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.util.Utils;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
 
 import java.util.Objects;
 
-public class RadioLinkerItem extends Item {
-    public RadioLinkerItem() {
-        super(new FabricItemSettings().group(SignalItemGroups.SIGNAL_ITEM_GROUP).maxCount(1));
+public class SignalSurveyorItem extends Item {
+    public SignalSurveyorItem() {
+        super(new FabricItemSettings().group(SignalItemGroups.COMMON_ITEM_GROUP).maxCount(1));
     }
 
     @Override

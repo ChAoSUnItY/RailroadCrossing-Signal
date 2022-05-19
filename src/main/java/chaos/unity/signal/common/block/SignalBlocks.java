@@ -11,6 +11,6 @@ public final class SignalBlocks {
 
     public static void register() {
         Registry.register(Registry.BLOCK, new Identifier("signal", "single_head_signal"), SINGLE_HEAD_SIGNAL);
-        Registry.register(Registry.ITEM, new Identifier("signal", "single_head_signal"), new BlockItem(SINGLE_HEAD_SIGNAL, new FabricItemSettings().group(SignalItemGroups.SIGNAL_ITEM_GROUP)));
+        Registry.register(Registry.ITEM, new Identifier("signal", "single_head_signal"), new BlockItem(SINGLE_HEAD_SIGNAL, new FabricItemSettings().group(SignalItemGroups.COMMON_ITEM_GROUP)));
     }
 }

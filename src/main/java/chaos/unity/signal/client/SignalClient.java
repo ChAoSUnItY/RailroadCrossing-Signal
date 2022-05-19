@@ -4,7 +4,7 @@ import chaos.unity.signal.SignalNetworking;
 import chaos.unity.signal.client.render.SingleSignalBlockEntityRenderer;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
-import chaos.unity.signal.common.item.RadioLinkerItem;
+import chaos.unity.signal.common.item.SignalSurveyorItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -42,7 +42,7 @@ public class SignalClient implements ClientModInitializer {
             if (hitResult instanceof BlockHitResult blockHitResult) {
                 var targetPos = blockHitResult.getBlockPos();
 
-                if (world.getBlockEntity(targetPos) instanceof SingleHeadSignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof RadioLinkerItem) {
+                if (world.getBlockEntity(targetPos) instanceof SingleHeadSignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof SignalSurveyorItem) {
                     var buf = PacketByteBufs.create();
                     buf.writeBlockPos(sbe.getPos());
                     ClientPlayNetworking.send(SignalNetworking.REQUEST_HIGHLIGHT_SIGNALS, buf);
