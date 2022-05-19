@@ -1,7 +1,7 @@
 package chaos.unity.signal;
 
 import chaos.unity.signal.client.particle.SignalParticles;
-import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -48,7 +48,7 @@ public final class SignalNetworking {
         var world = player.getEntityWorld();
 
         server.execute(() -> {
-            if (world.getBlockEntity(signalPos) instanceof SignalBlockEntity sbe) {
+            if (world.getBlockEntity(signalPos) instanceof SingleHeadSignalBlockEntity sbe) {
                 if (sbe.pairedSignalPos != null) {
                     var interval = IntervalData.getOrCreate(player.getWorld()).getBySignal(signalPos);
 

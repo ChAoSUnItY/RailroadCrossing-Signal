@@ -1,6 +1,6 @@
 package chaos.unity.signal.common.data;
 
-import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -28,12 +28,12 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
      * @param serverWorld
      */
     public void unbindAllRelatives(final ServerWorld serverWorld) {
-        if (serverWorld.getBlockEntity(signalPosA) instanceof SignalBlockEntity sbe) {
+        if (serverWorld.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
             sbe.markDirty();
         }
 
-        if (serverWorld.getBlockEntity(signalPosB) instanceof SignalBlockEntity sbe) {
+        if (serverWorld.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
             sbe.markDirty();
         }
@@ -92,7 +92,7 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
      * @param signalB
      * @return null when unable to retrieve interval
      */
-    public static Interval getInterval(final World world, final SignalBlockEntity signalA, final SignalBlockEntity signalB) {
+    public static Interval getInterval(final World world, final SingleHeadSignalBlockEntity signalA, final SingleHeadSignalBlockEntity signalB) {
         BlockPos railStartPoint = signalA.railBindPos, railEndPoint = signalB.railBindPos, signalPosA = signalA.getPos(), signalPosB = signalB.getPos();
 
         if (railStartPoint == null || railEndPoint == null)

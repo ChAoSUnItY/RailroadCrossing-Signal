@@ -1,8 +1,8 @@
 package chaos.unity.signal.common.item;
 
 import chaos.unity.signal.SignalNetworking;
-import chaos.unity.signal.common.block.SignalBlock;
-import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import chaos.unity.signal.common.block.SingleHeadSignalBlock;
+import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.util.Utils;
@@ -38,7 +38,7 @@ public class RadioLinkerItem extends Item {
                 var signalBindPos = Utils.fromIntArray(nbt.getIntArray("signal_bind_pos"));
                 var blockEntity = world.getBlockEntity(signalBindPos);
 
-                if (blockEntity instanceof SignalBlockEntity sbe) {
+                if (blockEntity instanceof SingleHeadSignalBlockEntity sbe) {
                     sbe.railBindPos = pos;
                     // Reset session
                     nbt.remove("signal_bind_pos");
@@ -82,13 +82,13 @@ public class RadioLinkerItem extends Item {
             }
 
             return ActionResult.SUCCESS;
-        } else if (blockState.getBlock() instanceof SignalBlock) {
+        } else if (blockState.getBlock() instanceof SingleHeadSignalBlock) {
             if (nbt.contains("rail_bind_pos", NbtElement.INT_ARRAY_TYPE)) {
                 // Complete current session
                 var railBindPos = Utils.fromIntArray(nbt.getIntArray("rail_bind_pos"));
                 var blockEntity = world.getBlockEntity(pos);
 
-                if (blockEntity instanceof SignalBlockEntity sbe) {
+                if (blockEntity instanceof SingleHeadSignalBlockEntity sbe) {
                     sbe.railBindPos = railBindPos;
                     // Reset session
                     nbt.remove("signal_bind_pos");
@@ -113,13 +113,13 @@ public class RadioLinkerItem extends Item {
 
                     if (world.isClient)
                         player.sendMessage(new LiteralText("Current binding session terminated"), false);
-                } else if (!(world.getBlockState(signalBindPos).getBlock() instanceof SignalBlock)) {
+                } else if (!(world.getBlockState(signalBindPos).getBlock() instanceof SingleHeadSignalBlock)) {
                     // Abandon current session and create new session since original block is not rail anymore
                     nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
 
                     if (world.isClient)
                         player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
-                } else if (world.getBlockEntity(signalBindPos) instanceof SignalBlockEntity sbe1 && world.getBlockEntity(pos) instanceof SignalBlockEntity sbe2) {
+                } else if (world.getBlockEntity(signalBindPos) instanceof SingleHeadSignalBlockEntity sbe1 && world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe2) {
                     if (sbe1.railBindPos == null) {
                         if (world.isClient)
                             player.sendMessage(new LiteralText("Previous signal is not bound to any rail").formatted(Formatting.RED), false);

@@ -1,31 +1,21 @@
 package chaos.unity.signal.client;
 
 import chaos.unity.signal.SignalNetworking;
-import chaos.unity.signal.client.particle.SignalParticles;
-import chaos.unity.signal.common.blockentity.SignalBlockEntity;
+import chaos.unity.signal.client.render.SingleSignalBlockEntityRenderer;
+import chaos.unity.signal.common.blockentity.SignalBlockEntities;
+import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.item.RadioLinkerItem;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.particle.AbstractDustParticle;
-import net.minecraft.client.particle.RedDustParticle;
-import net.minecraft.client.particle.SpellParticle;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.WorldEvents;
 
 import java.util.Objects;
 
@@ -33,7 +23,12 @@ import java.util.Objects;
 public class SignalClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        registerBlockEntityRenderer();
         registerClientEvent();
+    }
+
+    private void registerBlockEntityRenderer() {
+        BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BLOCK_ENTITY, SingleSignalBlockEntityRenderer::new);
     }
 
     private void registerClientEvent() {
@@ -49,7 +44,7 @@ public class SignalClient implements ClientModInitializer {
             if (hitResult instanceof BlockHitResult blockHitResult) {
                 var targetPos = blockHitResult.getBlockPos();
 
-                if (world.getBlockEntity(targetPos) instanceof SignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof RadioLinkerItem) {
+                if (world.getBlockEntity(targetPos) instanceof SingleHeadSignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof RadioLinkerItem) {
                     var buf = PacketByteBufs.create();
                     buf.writeBlockPos(sbe.getPos());
                     ClientPlayNetworking.send(SignalNetworking.REQUEST_HIGHLIGHT_SIGNALS, buf);

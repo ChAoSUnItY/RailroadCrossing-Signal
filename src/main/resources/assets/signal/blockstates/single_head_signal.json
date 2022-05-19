@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "signal:block/single_head_signal",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "signal:block/single_head_signal"
+    },
+    "facing=south": {
+      "model": "signal:block/single_head_signal",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "signal:block/single_head_signal",
+      "y": 270
+    }
+  }
+}
