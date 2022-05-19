@@ -1,17 +1,19 @@
 package chaos.unity.signal.common.data;
 
-import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
+import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -25,17 +27,18 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
                        @NotNull List<@NotNull BlockPos> intervalPath) {
     /**
      * Unbind all signal instances, this does not unbind signal instances' rail bound pos
-     * @param serverWorld
      */
-    public void unbindAllRelatives(final ServerWorld serverWorld) {
-        if (serverWorld.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe) {
+    public void unbindAllRelatives(final World world) {
+        if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
-            sbe.markDirty();
+            sbe.mode = SignalMode.BLINK_RED;
+            sbe.markDirtyAndSync();
         }
 
-        if (serverWorld.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe) {
+        if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe) {
             sbe.pairedSignalPos = null;
-            sbe.markDirty();
+            sbe.mode = SignalMode.BLINK_RED;
+            sbe.markDirtyAndSync();
         }
     }
 
@@ -135,5 +138,30 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
         }
 
         return new Interval(new BlockPos(signalPosA), new BlockPos(signalPosB), intervalPath);
+    }
+
+    public static List<BlockPos> findIntervalPath(final World world, final BlockPos startPos, final int start, final int end, BiConsumer<BlockPos.Mutable, Integer> setter) {
+        var intervalPath = new ArrayList<BlockPos>();
+        var blockPosPool = startPos.mutableCopy();
+
+        for (var i = start; i <= end; i++) {
+            var found = false;
+            int y = blockPosPool.getY();
+            setter.accept(blockPosPool, i);
+
+            for (var j = -1; j < 2; j++) {
+                if (world.getBlockState(blockPosPool.setY(y - j)).getBlock() instanceof AbstractRailBlock) {
+                    intervalPath.add(new BlockPos(blockPosPool));
+                    found = true;
+                    break;
+                }
+            }
+
+            // Interval path incomplete
+            if (!found)
+                return null;
+        }
+
+        return intervalPath;
     }
 }

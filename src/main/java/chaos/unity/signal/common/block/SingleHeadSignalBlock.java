@@ -1,7 +1,7 @@
 package chaos.unity.signal.common.block;
 
-import chaos.unity.signal.common.blockentity.SignalBlockEntities;
-import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
+import chaos.unity.signal.common.block.entity.SignalBlockEntities;
+import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -18,7 +18,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 public class SingleHeadSignalBlock extends HorizontalFacingBlock implements BlockEntityProvider {
@@ -30,7 +29,8 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     }
 
     @Override
-    public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        super.onStateReplaced(state, world, pos, newState, moved);
         if (world instanceof ServerWorld serverWorld && serverWorld.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe && sbe.pairedSignalPos != null) {
             var intervalData = IntervalData.getOrCreate(serverWorld);
             var removedInterval = intervalData.removeBySignal(pos);
@@ -40,7 +40,6 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
                 removedInterval.unbindAllRelatives(serverWorld);
             }
         }
-        super.onBroken(world, pos, state);
     }
 
     @Override
@@ -52,6 +51,16 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getPlayerFacing().getOpposite());
+    }
+
+    @Override
+    public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
+        super.onSyncedBlockEvent(state, world, pos, type, data);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity == null) {
+            return false;
+        }
+        return blockEntity.onSyncedBlockEvent(type, data);
     }
 
     @Nullable

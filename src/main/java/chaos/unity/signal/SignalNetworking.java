@@ -1,7 +1,7 @@
 package chaos.unity.signal;
 
 import chaos.unity.signal.client.particle.SignalParticles;
-import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
+import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
@@ -19,6 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public final class SignalNetworking {
     public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("signal", "request_add_interval");
     public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("signal", "request_highlight_signals");
     // SERVER 2 CLIENT
+    public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("signal", "sync_block_entity");
     public static final Identifier CALLBACK_ADD_RESULT = new Identifier("signal", "callback_add_result");
     public static final Identifier HIGHLIGHT_SIGNAL_NO_BOUND = new Identifier("signal", "highlight_signal_no_bound");
     public static final Identifier HIGHLIGHT_SIGNAL = new Identifier("signal", "highlight_signal");
@@ -37,6 +40,7 @@ public final class SignalNetworking {
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_HIGHLIGHT_SIGNALS, SignalNetworking::requestHighlightSignals);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_ADD_INTERVAL, SignalNetworking::requestAddInterval);
 
+        ClientPlayNetworking.registerGlobalReceiver(SYNC_BLOCK_ENTITY, SignalNetworking::syncBlockEntity);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL_NO_BOUND, SignalNetworking::highlightSignalNoBound);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL, SignalNetworking::highlightSignal);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_INTERVAL_INSTANCE, SignalNetworking::highlightIntervalInstance);
@@ -55,13 +59,7 @@ public final class SignalNetworking {
                     if (interval != null) {
                         var responseBuf = PacketByteBufs.create();
 
-                        responseBuf.writeBlockPos(interval.signalPosA())
-                                .writeBlockPos(interval.signalPosB())
-                                .writeInt(interval.intervalPath().size());
-
-                        for (var pos : interval.intervalPath()) {
-                            responseBuf.writeBlockPos(pos);
-                        }
+                        writeInterval(responseBuf, interval);
 
                         responseSender.sendPacket(HIGHLIGHT_INTERVAL_INSTANCE, responseBuf);
                     }
@@ -143,7 +141,34 @@ public final class SignalNetworking {
         }
     }
 
-    private static Interval readInterval(PacketByteBuf buf) {
+    private static void syncBlockEntity(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        var pos = buf.readBlockPos();
+        var rawId = buf.readVarInt();
+        var nbt = buf.readNbt();
+
+        if (client.world != null) {
+            client.execute(() -> {
+                BlockEntity blockEntity;
+
+                if ((blockEntity = client.world.getBlockEntity(pos)) != null && blockEntity.getType() == Registry.BLOCK_ENTITY_TYPE.get(rawId)) {
+                    blockEntity.readNbt(nbt);
+                    blockEntity.markDirty();
+                }
+            });
+        }
+    }
+
+    public static void writeInterval(PacketByteBuf buf, Interval interval) {
+        buf.writeBlockPos(interval.signalPosA())
+                .writeBlockPos(interval.signalPosB())
+                .writeInt(interval.intervalPath().size());
+
+        for (var pos : interval.intervalPath())
+            buf.writeBlockPos(pos);
+
+    }
+
+    public static Interval readInterval(PacketByteBuf buf) {
         var signalPosA = buf.readBlockPos();
         var signalPosB = buf.readBlockPos();
         var pathLength = buf.readInt();

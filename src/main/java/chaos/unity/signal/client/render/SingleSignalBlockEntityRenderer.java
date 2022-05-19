@@ -1,6 +1,6 @@
 package chaos.unity.signal.client.render;
 
-import chaos.unity.signal.common.blockentity.SingleHeadSignalBlockEntity;
+import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumer;
@@ -17,10 +17,10 @@ import java.awt.*;
 @Environment(EnvType.CLIENT)
 public class SingleSignalBlockEntityRenderer implements BlockEntityRenderer<SingleHeadSignalBlockEntity> {
     private static final float[][][] PRECALCULATED_VERTEXES = {
-            {{0.625f, 0.375f, .755F}, {0.625f, 0.625f, .755F}, {0.375f, 0.625f, .755F}, {0.375f, 0.375f, .755F}}, // SOUTH
+            {{0.625f, 0.375f, 0.755F}, {0.625f, 0.625f, .755F}, {0.375f, 0.625f, 0.755F}, {0.375f, 0.375f, 0.755F}}, // SOUTH
             {{0.245f, 0.625f, 0.375f}, {0.245f, 0.625f, 0.625f}, {0.245f, 0.375f, 0.625f}, {0.245f, 0.375f, 0.375f}}, // WEST
-            {{0.625f, 0.375f, .245F}, {0.625f, 0.625f, .245F}, {0.375f, 0.625f, .245F}, {0.375f, 0.375f, .245F}}, // NORTH
-            {{.755F, 0.625f, 0.375f}, {.755F, 0.625f, 0.625f}, {.755F, 0.375f, 0.625f}, {.755F, 0.375f, 0.375f}}, // EAST
+            {{0.625f, 0.375f, 0.245F}, {0.625f, 0.625f, 0.245F}, {0.375f, 0.625f, 0.245F}, {0.375f, 0.375f, 0.245F}}, // NORTH
+            {{0.755F, 0.625f, 0.375f}, {0.755F, 0.625f, 0.625f}, {0.755F, 0.375f, 0.625f}, {0.755F, 0.375f, 0.375f}}, // EAST
     };
 
     public SingleSignalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
@@ -40,7 +40,7 @@ public class SingleSignalBlockEntityRenderer implements BlockEntityRenderer<Sing
                 vertexConsumers.getBuffer(SignalLightRenderLayer.SIGNAL_LIGHT),
                 matrices.peek().getPositionMatrix(),
                 entity.getCachedState().get(Properties.HORIZONTAL_FACING),
-                Color.RED
+                entity.mode.color
         );
 
         matrices.pop();

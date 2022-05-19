@@ -14,7 +14,7 @@ public class SignalLightRenderLayer extends RenderLayer {
                 VertexFormats.POSITION_COLOR,
                 VertexFormat.DrawMode.QUADS,
                 256,
-                true,
+                false,
                 false,
                 () -> {
                     RenderSystem.setShader(GameRenderer::getPositionColorShader);

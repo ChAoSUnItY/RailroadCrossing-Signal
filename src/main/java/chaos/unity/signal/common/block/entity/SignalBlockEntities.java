@@ -1,4 +1,4 @@
-package chaos.unity.signal.common.blockentity;
+package chaos.unity.signal.common.block.entity;
 
 import chaos.unity.signal.common.block.SignalBlocks;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
