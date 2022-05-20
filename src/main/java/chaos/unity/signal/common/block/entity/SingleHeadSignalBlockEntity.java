@@ -208,6 +208,8 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
             railBindPos = NbtHelper.toBlockPos(nbt.getCompound("rail_bound_pos"));
         if (nbt.contains("paired_signal_pos"))
             pairedSignalPos = NbtHelper.toBlockPos(nbt.getCompound("paired_signal_pos"));
+        if (nbt.contains("receiver_pos"))
+            receiverPos = NbtHelper.toBlockPos(nbt.getCompound("receiver_pos"));
         mode = SignalMode.values[nbt.getInt("signal_mode")];
         super.readNbt(nbt);
     }
@@ -218,6 +220,8 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
             nbt.put("rail_bound_pos", NbtHelper.fromBlockPos(railBindPos));
         if (pairedSignalPos != null)
             nbt.put("paired_signal_pos", NbtHelper.fromBlockPos(pairedSignalPos));
+        if (receiverPos != null)
+            nbt.put("receiver_pos", NbtHelper.fromBlockPos(receiverPos));
         nbt.putInt("signal_mode", mode.ordinal());
         super.writeNbt(nbt);
     }

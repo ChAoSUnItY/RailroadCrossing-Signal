@@ -42,6 +42,15 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
     }
 
     @Override
+    public @NotNull SignalMode getReceivingMode() {
+        if (receivingOwnerPos != null && world != null && world.getBlockEntity(receivingOwnerPos) instanceof ISignalEmitter emitter) {
+            return emitter.getSignal(0);
+        }
+
+        return ISignalReceiver.super.getReceivingMode();
+    }
+
+    @Override
     public void readNbt(NbtCompound nbt) {
         if (nbt.contains("receiving_owner_pos"))
             receivingOwnerPos = NbtHelper.toBlockPos(nbt.getCompound("receiving_owner_pos"));
