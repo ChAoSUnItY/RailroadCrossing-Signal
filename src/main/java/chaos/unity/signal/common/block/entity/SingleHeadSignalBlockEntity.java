@@ -57,7 +57,7 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
         var pos = getPos().mutableCopy().move(0, 1, 0);
 
         for (int y = 0; y < 5; y++) {
-            pos.move(0 , -1, 0);
+            pos.move(0, -1, 0);
 
             if (world.getBlockState(pos).getBlock() instanceof AbstractRailBlock) {
                 return pos.toImmutable();
@@ -137,11 +137,8 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
             return;
 
         if (receiverPos != null) {
-            if (this.receiverPos != null) {
-                world.updateNeighbors(this.receiverPos, world.getBlockState(this.receiverPos).getBlock());
-                if (world.getBlockEntity(this.receiverPos) instanceof ISignalReceiver receiver) {
-                    receiver.setReceivingOwnerPos(null);
-                }
+            if (this.receiverPos != null && world.getBlockEntity(this.receiverPos) instanceof ISignalReceiver receiver) {
+                receiver.setReceivingOwnerPos(null);
             }
 
             this.receiverPos = receiverPos;
@@ -181,7 +178,7 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
 
     @Override
     public SignalMode[] getSignals() {
-        return new SignalMode[]{ mode };
+        return new SignalMode[]{mode};
     }
 
     @Override

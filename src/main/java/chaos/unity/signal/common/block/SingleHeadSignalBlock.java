@@ -1,5 +1,6 @@
 package chaos.unity.signal.common.block;
 
+import chaos.unity.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.world.IntervalData;
@@ -31,13 +32,18 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         super.onStateReplaced(state, world, pos, newState, moved);
-        if (world instanceof ServerWorld serverWorld && serverWorld.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe && sbe.pairedSignalPos != null) {
-            var intervalData = IntervalData.getOrCreate(serverWorld);
-            var removedInterval = intervalData.removeBySignal(pos);
+        if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe) {
+            if (world instanceof ServerWorld serverWorld && sbe.pairedSignalPos != null) {
+                var intervalData = IntervalData.getOrCreate(serverWorld);
+                var removedInterval = intervalData.removeBySignal(pos);
 
-            if (removedInterval != null) {
-                intervalData.markDirty();
-                removedInterval.unbindAllRelatives(serverWorld);
+                if (removedInterval != null) {
+                    intervalData.markDirty();
+                    removedInterval.unbindAllRelatives(serverWorld);
+                }
+            }
+            if (sbe.receiverPos != null && world.getBlockEntity(sbe.receiverPos) instanceof ISignalReceiver receiver) {
+                receiver.setReceivingOwnerPos(null);
             }
         }
     }
