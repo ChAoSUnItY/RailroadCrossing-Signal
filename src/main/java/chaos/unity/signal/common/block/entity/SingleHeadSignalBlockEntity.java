@@ -95,8 +95,22 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
         markDirtyAndSync();
     }
 
+    @Override
     public void startTuningSession() {
+        if (world == null)
+            return;
+
         mode = SignalMode.BLINK_YELLOW;
+
+        if (receiverPos != null) {
+            // Take the ownership of current receiver
+            if (world.getBlockEntity(receiverPos) instanceof ISignalReceiver receiver) {
+                receiver.setReceivingOwnerPos(null);
+            }
+
+            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
+            receiverPos = null;
+        }
 
         markDirtyAndSync();
     }
@@ -117,9 +131,21 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
         markDirtyAndSync();
     }
 
+    @Override
     public void endTuningSession(@Nullable BlockPos receiverPos) {
+        if (world == null)
+            return;
+
         if (receiverPos != null) {
+            if (this.receiverPos != null) {
+                world.updateNeighbors(this.receiverPos, world.getBlockState(this.receiverPos).getBlock());
+                if (world.getBlockEntity(this.receiverPos) instanceof ISignalReceiver receiver) {
+                    receiver.setReceivingOwnerPos(null);
+                }
+            }
+
             this.receiverPos = receiverPos;
+            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
 
         mode = pairedSignalPos != null ? SignalMode.GREEN : SignalMode.BLINK_RED;
@@ -128,10 +154,17 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
     }
 
     public void setSignalMode(@NotNull SignalMode mode) {
-        if (mode == SignalMode.BLINK_YELLOW)
+        if (world == null)
+            return;
+
+        if (this.mode == SignalMode.BLINK_YELLOW)
             return; // Occupied by either surveying or tuning session
 
         this.mode = mode;
+
+        if (receiverPos != null) {
+            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
+        }
     }
 
     public boolean isInInterval() {
@@ -154,6 +187,19 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
     @Override
     public SignalMode getSignal(int index) {
         return mode;
+    }
+
+    @Nullable
+    @Override
+    public BlockPos getReceiverPos() {
+        return receiverPos;
+    }
+
+    @Override
+    public void setReceiverPos(BlockPos receiverPos) {
+        this.receiverPos = receiverPos;
+
+        markDirtyAndSync();
     }
 
     @Override

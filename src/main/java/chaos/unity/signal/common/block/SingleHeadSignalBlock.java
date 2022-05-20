@@ -53,16 +53,6 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
         return getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getPlayerFacing().getOpposite());
     }
 
-    @Override
-    public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
-        super.onSyncedBlockEvent(state, world, pos, type, data);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return false;
-        }
-        return blockEntity.onSyncedBlockEvent(type, data);
-    }
-
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {

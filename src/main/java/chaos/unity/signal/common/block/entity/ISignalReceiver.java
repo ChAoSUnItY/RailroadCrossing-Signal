@@ -7,5 +7,5 @@ import org.jetbrains.annotations.Nullable;
 public interface ISignalReceiver {
     @Nullable BlockPos getReceivingOwnerPos();
 
-    void setReceivingOwnerPos(@NotNull BlockPos receivingOwnerPos);
+    void setReceivingOwnerPos(@Nullable BlockPos receivingOwnerPos);
 }

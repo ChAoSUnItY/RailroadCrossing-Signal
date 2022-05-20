@@ -29,17 +29,17 @@ public class SignalSurveyorItem extends Item {
         var nbt = context.getStack().getOrCreateNbt();
 
         if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity currentSignalBE) {
-            if (nbt.contains("signal_bind_pos")) {
-                var originalPos = NbtHelper.toBlockPos(nbt.getCompound("signal_bind_pos"));
+            if (nbt.contains("signal_pos")) {
+                var originalPos = NbtHelper.toBlockPos(nbt.getCompound("signal_pos"));
 
                 if (world.getBlockEntity(originalPos) instanceof SingleHeadSignalBlockEntity originalSignalBE) {
                     if (originalPos.equals(pos)) {
                         // Reset current session
                         originalSignalBE.endSurveySession(null);
-                        nbt.remove("signal_bind_pos");
+                        nbt.remove("signal_pos");
 
                         if (world.isClient)
-                            player.sendMessage(new LiteralText("Current binding session terminated").formatted(Formatting.YELLOW), false);
+                            player.sendMessage(new LiteralText("Current survey session terminated").formatted(Formatting.YELLOW), false);
                     } else {
                         if (!originalSignalBE.hasRail()) {
                             if (world.isClient)
@@ -86,22 +86,22 @@ public class SignalSurveyorItem extends Item {
                         }
 
                         // Reset current session
-                        nbt.remove("signal_bind_pos");
+                        nbt.remove("signal_pos");
                     }
                 } else {
                     // Abandon current session and create new session since original block is not signal anymore
-                    nbt.put("signal_bind_pos", NbtHelper.fromBlockPos(pos));
+                    nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new LiteralText("Starts a new survey session (previous session abandoned)").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
                 currentSignalBE.startSurveySession();
-                nbt.put("signal_bind_pos", NbtHelper.fromBlockPos(pos));
+                nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
-                    player.sendMessage(new LiteralText("Starts a new binding session"), false);
+                    player.sendMessage(new LiteralText("Starts a new survey session"), false);
             }
 
             return ActionResult.SUCCESS;
