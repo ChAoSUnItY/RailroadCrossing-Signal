@@ -20,9 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncable {
-    public BlockPos railBindPos;
-    public BlockPos pairedSignalPos;
+public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncable, ISignalEmitter {
+    public @Nullable BlockPos railBindPos;
+    public @Nullable BlockPos pairedSignalPos;
+    public @Nullable BlockPos receiverPos;
     public @NotNull SignalMode mode = SignalMode.BLINK_RED;
 
     public SingleHeadSignalBlockEntity(BlockPos pos, BlockState state) {
@@ -79,7 +80,7 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
     /**
      * Begin the linkage session, this will automatically deregister interval if it is part of interval instance
      */
-    public void startLinkSession() {
+    public void startSurveySession() {
         mode = SignalMode.BLINK_YELLOW;
 
         if (getWorld() instanceof ServerWorld serverWorld) {
@@ -94,12 +95,18 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
         markDirtyAndSync();
     }
 
+    public void startTuningSession() {
+        mode = SignalMode.BLINK_YELLOW;
+
+        markDirtyAndSync();
+    }
+
     /**
      * Complete the linkage session, this will deregister interval instance which target signal is in if available.
      *
      * @param signalPos if session is incomplete, pass null, otherwise pass target signal's {@link BlockPos}
      */
-    public void endLinkSession(@Nullable BlockPos signalPos) {
+    public void endSurveySession(@Nullable BlockPos signalPos) {
         if (signalPos != null) {
             pairedSignalPos = signalPos;
             mode = SignalMode.GREEN;
@@ -108,6 +115,23 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
         }
 
         markDirtyAndSync();
+    }
+
+    public void endTuningSession(@Nullable BlockPos receiverPos) {
+        if (receiverPos != null) {
+            this.receiverPos = receiverPos;
+        }
+
+        mode = pairedSignalPos != null ? SignalMode.GREEN : SignalMode.BLINK_RED;
+
+        markDirtyAndSync();
+    }
+
+    public void setSignalMode(@NotNull SignalMode mode) {
+        if (mode == SignalMode.BLINK_YELLOW)
+            return; // Occupied by either surveying or tuning session
+
+        this.mode = mode;
     }
 
     public boolean isInInterval() {
@@ -120,6 +144,16 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
 
     public boolean hasRail() {
         return railBindPos != null;
+    }
+
+    @Override
+    public SignalMode[] getSignals() {
+        return new SignalMode[]{ mode };
+    }
+
+    @Override
+    public SignalMode getSignal(int index) {
+        return mode;
     }
 
     @Override
