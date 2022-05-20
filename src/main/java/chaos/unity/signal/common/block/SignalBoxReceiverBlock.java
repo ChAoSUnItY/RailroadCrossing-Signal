@@ -10,11 +10,15 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider {
+    public static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(0.125f, 0, 0.125f, 0.875f, 0.9375f, 0.875f);
+
     public SignalBoxReceiverBlock() {
         super(Settings.of(Material.METAL));
     }
@@ -48,6 +52,11 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
         }
 
         return 0;
+    }
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return DEFAULT_SHAPE;
     }
 
     @Nullable
