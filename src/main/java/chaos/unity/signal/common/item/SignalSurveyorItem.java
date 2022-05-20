@@ -6,15 +6,13 @@ import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.util.Utils;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -32,12 +30,12 @@ public class SignalSurveyorItem extends Item {
 
         if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity currentSignalBE) {
             if (nbt.contains("signal_bind_pos")) {
-                var originalPos = Utils.fromIntArray(nbt.getIntArray("signal_bind_pos"));
+                var originalPos = NbtHelper.toBlockPos(nbt.getCompound("signal_bind_pos"));
 
                 if (world.getBlockEntity(originalPos) instanceof SingleHeadSignalBlockEntity originalSignalBE) {
                     if (originalPos.equals(pos)) {
                         // Reset current session
-                        originalSignalBE.endLinkSession(null);
+                        originalSignalBE.endSurveySession(null);
                         nbt.remove("signal_bind_pos");
 
                         if (world.isClient)
@@ -72,8 +70,8 @@ public class SignalSurveyorItem extends Item {
                                     }
                                 }
 
-                                originalSignalBE.endLinkSession(pos);
-                                currentSignalBE.endLinkSession(originalPos);
+                                originalSignalBE.endSurveySession(pos);
+                                currentSignalBE.endSurveySession(originalPos);
 
                                 if (world instanceof ServerWorld serverWorld) {
                                     // Register interval on server side only
@@ -92,15 +90,15 @@ public class SignalSurveyorItem extends Item {
                     }
                 } else {
                     // Abandon current session and create new session since original block is not signal anymore
-                    nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
+                    nbt.put("signal_bind_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
                         player.sendMessage(new LiteralText("Starts a new binding session (previous session abandoned)").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
-                currentSignalBE.startLinkSession();
-                nbt.putIntArray("signal_bind_pos", Utils.asIntArray(pos));
+                currentSignalBE.startSurveySession();
+                nbt.put("signal_bind_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
                     player.sendMessage(new LiteralText("Starts a new binding session"), false);
