@@ -6,7 +6,6 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 
 public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalReceiver> extends SignalBlockEntityRenderer implements BlockEntityRenderer<T> {
@@ -22,7 +21,7 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalReceive
 
     @Override
     public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var mode = entity.getReceivingMode();
+        var mode = entity.getReceivingSignal();
 
         if (mode.isBlink()) {
             // Renders solid color block for 10 ticks and renders nothing for the rest 10 ticks

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncable, ISignalEmitter {
+public final class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncable, ISignalEmitter, ISingleHeadSignal {
     public @Nullable BlockPos railBindPos;
     public @Nullable BlockPos pairedSignalPos;
     public @Nullable BlockPos receiverPos;
@@ -183,6 +183,11 @@ public class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncabl
 
     @Override
     public SignalMode getSignal(int index) {
+        return mode;
+    }
+
+    @Override
+    public @NotNull SignalMode getSignal() {
         return mode;
     }
 

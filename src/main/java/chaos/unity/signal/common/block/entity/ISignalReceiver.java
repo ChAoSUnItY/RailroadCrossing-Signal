@@ -10,7 +10,7 @@ public interface ISignalReceiver {
 
     void setReceivingOwnerPos(@Nullable BlockPos receivingOwnerPos);
 
-    default @NotNull SignalMode getReceivingMode() {
+    default @NotNull SignalMode getReceivingSignal() {
         return SignalMode.BLINK_RED;
     }
 }
