@@ -3,7 +3,6 @@ package chaos.unity.signal.common.item;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
-import chaos.unity.signal.common.util.Utils;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;

@@ -1,19 +1,101 @@
 {
-  "variants": {
-    "facing=east": {
-      "model": "signal:block/single_head_signal",
-      "y": 90
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "signal:block/single_head_signal",
+        "uvlock": true
+      }
     },
-    "facing=north": {
-      "model": "signal:block/single_head_signal"
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "signal:block/single_head_signal",
+        "y": 90,
+        "uvlock": true
+      }
     },
-    "facing=south": {
-      "model": "signal:block/single_head_signal",
-      "y": 180
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "signal:block/single_head_signal",
+        "y": 180,
+        "uvlock": true
+      }
     },
-    "facing=west": {
-      "model": "signal:block/single_head_signal",
-      "y": 270
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "signal:block/single_head_signal",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_side",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_side",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_side",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_side",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_post",
+        "x": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "signal:block/signal_post",
+        "uvlock": true
+      }
     }
-  }
+  ]
 }
