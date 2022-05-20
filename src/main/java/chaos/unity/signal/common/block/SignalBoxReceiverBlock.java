@@ -25,7 +25,6 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
         if (world.getBlockEntity(pos) instanceof ISignalReceiver receiver) {
             var receiverOwnerPos = receiver.getReceivingOwnerPos();
 
@@ -33,6 +32,7 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
                 emitter.setReceiverPos(null);
             }
         }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override

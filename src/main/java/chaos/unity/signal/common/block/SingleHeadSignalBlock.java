@@ -1,8 +1,10 @@
 package chaos.unity.signal.common.block;
 
+import chaos.unity.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
+import chaos.unity.signal.common.data.SignalMode;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -31,21 +33,28 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
         if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe) {
-            if (world instanceof ServerWorld serverWorld && sbe.pairedSignalPos != null) {
-                var intervalData = IntervalData.getOrCreate(serverWorld);
-                var removedInterval = intervalData.removeBySignal(pos);
+            if (sbe.pairedSignalPos != null) {
+                if (world instanceof ServerWorld serverWorld) {
+                    var intervalData = IntervalData.getOrCreate(serverWorld);
+                    var removedInterval = intervalData.removeBySignal(pos);
 
-                if (removedInterval != null) {
-                    intervalData.markDirty();
-                    removedInterval.unbindAllRelatives(serverWorld);
+                    if (removedInterval != null) {
+                        intervalData.markDirty();
+                        removedInterval.unbindAllRelatives(serverWorld);
+                    }
+                }
+
+                if (world.getBlockEntity(sbe.pairedSignalPos) instanceof SingleHeadSignalBlockEntity pairedSignalBE) {
+                    pairedSignalBE.pairedSignalPos = null;
+                    pairedSignalBE.setSignalMode(SignalMode.BLINK_RED);
                 }
             }
             if (sbe.receiverPos != null && world.getBlockEntity(sbe.receiverPos) instanceof ISignalReceiver receiver) {
                 receiver.setReceivingOwnerPos(null);
             }
         }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override
