@@ -27,7 +27,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
     public @NotNull SignalMode mode = SignalMode.BLINK_RED;
 
     public SingleHeadSignalBlockEntity(BlockPos pos, BlockState state) {
-        super(SignalBlockEntities.SIGNAL_BLOCK_ENTITY, pos, state);
+        super(SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, pos, state);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, SingleHeadSignalBlockEntity blockEntity) {

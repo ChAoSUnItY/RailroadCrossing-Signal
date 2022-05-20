@@ -1,6 +1,5 @@
 package chaos.unity.signal.common.block;
 
-import chaos.unity.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
@@ -24,7 +23,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SingleHeadSignalBlock extends HorizontalFacingBlock implements BlockEntityProvider {
-    private static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, .75, .75);
+    static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, .75, .75);
 
     public SingleHeadSignalBlock() {
         super(FabricBlockSettings.of(Material.METAL));
@@ -34,7 +33,7 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity sbe) {
-            if (sbe.pairedSignalPos != null) {
+            if (sbe.hasPaired()) {
                 if (world instanceof ServerWorld serverWorld) {
                     var intervalData = IntervalData.getOrCreate(serverWorld);
                     var removedInterval = intervalData.removeBySignal(pos);
@@ -77,7 +76,7 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return BlockWithEntity.checkType(type, SignalBlockEntities.SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntity::tick);
+        return BlockWithEntity.checkType(type, SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntity::tick);
     }
 
     @Override

@@ -21,12 +21,6 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
         super(SignalBlockEntities.SIGNAL_BOX_RECEIVER_BLOCK_ENTITY, pos, state);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, SignalBoxReceiverBlockEntity blockEntity) {
-        if (blockEntity.receivingOwnerPos != null && world.getBlockEntity(blockEntity.receivingOwnerPos) instanceof ISignalEmitter emitter) {
-
-        }
-    }
-
     @Nullable
     @Override
     public BlockPos getReceivingOwnerPos() {
@@ -35,6 +29,9 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
 
     @Override
     public void setReceivingOwnerPos(@NotNull BlockPos receivingOwnerPos) {
+        if (world == null)
+            return;
+
         this.receivingOwnerPos = receivingOwnerPos;
 
         markDirtyAndSync();

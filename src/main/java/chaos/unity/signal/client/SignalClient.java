@@ -2,7 +2,8 @@ package chaos.unity.signal.client;
 
 import chaos.unity.signal.SignalNetworking;
 import chaos.unity.signal.client.render.SignalBoxBlockEntityRenderer;
-import chaos.unity.signal.client.render.SingleSignalBlockEntityRenderer;
+import chaos.unity.signal.client.render.SingleHeadSignalBlockEntityRenderer;
+import chaos.unity.signal.common.block.SingleHeadSignalBlock;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.item.SignalSurveyorItem;
@@ -27,8 +28,9 @@ public class SignalClient implements ClientModInitializer {
     }
 
     private void registerBlockEntityRenderer() {
-        BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BLOCK_ENTITY, SingleSignalBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_RECEIVER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(SignalBlockEntities.DISTANT_SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
     }
 
     private void registerClientEvent() {

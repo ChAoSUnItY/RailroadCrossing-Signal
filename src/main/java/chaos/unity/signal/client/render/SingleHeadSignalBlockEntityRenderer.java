@@ -1,7 +1,6 @@
 package chaos.unity.signal.client.render;
 
 import chaos.unity.signal.common.block.entity.ISingleHeadSignal;
-import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.entity.BlockEntity;
@@ -12,7 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.state.property.Properties;
 
 @Environment(EnvType.CLIENT)
-public class SingleSignalBlockEntityRenderer<T extends BlockEntity & ISingleHeadSignal> extends SignalBlockEntityRenderer implements BlockEntityRenderer<T> {
+public class SingleHeadSignalBlockEntityRenderer<T extends BlockEntity & ISingleHeadSignal> extends SignalBlockEntityRenderer implements BlockEntityRenderer<T> {
     private static final float[][][] PRECALCULATED_VERTEXES = {
             {{0.625f, 0.375f, 0.755F}, {0.625f, 0.625f, .755F}, {0.375f, 0.625f, 0.755F}, {0.375f, 0.375f, 0.755F}}, // SOUTH
             {{0.245f, 0.625f, 0.375f}, {0.245f, 0.625f, 0.625f}, {0.245f, 0.375f, 0.625f}, {0.245f, 0.375f, 0.375f}}, // WEST
@@ -20,7 +19,7 @@ public class SingleSignalBlockEntityRenderer<T extends BlockEntity & ISingleHead
             {{0.755F, 0.625f, 0.375f}, {0.755F, 0.625f, 0.625f}, {0.755F, 0.375f, 0.625f}, {0.755F, 0.375f, 0.375f}}, // EAST
     };
 
-    public SingleSignalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public SingleHeadSignalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
     }
 
     @Override
