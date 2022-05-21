@@ -3,7 +3,6 @@ package chaos.unity.signal.client;
 import chaos.unity.signal.SignalNetworking;
 import chaos.unity.signal.client.render.SignalBoxBlockEntityRenderer;
 import chaos.unity.signal.client.render.SingleHeadSignalBlockEntityRenderer;
-import chaos.unity.signal.common.block.SingleHeadSignalBlock;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.item.SignalSurveyorItem;

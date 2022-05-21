@@ -1,0 +1,7 @@
+{
+  "item.signal.signal_surveyor": "Signal Surveyor",
+  "item.signal.signal_tuner": "Signal Tuner",
+  "block.signal.single_head_signal": "Single Head Signal",
+  "block.signal.distant_single_head_signal": "Distant Single Head Signal",
+  "block.signal.signal_box_receiver": "Signal Box Receiver"
+}
