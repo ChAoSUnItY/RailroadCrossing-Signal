@@ -24,7 +24,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -95,7 +94,7 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
         var state = world.getBlockState(pos);
         var block = state.getBlock();
         var bl2 = block instanceof FenceGateBlock && FenceGateBlock.canWallConnect(state, dir);
-        return facingDir != dir.getOpposite() && !FenceBlock.cannotConnect(state) && state.isSideSolidFullSquare(world, pos, dir) || bl2;
+        return facingDir != dir.getOpposite() && !FenceBlock.cannotConnect(state) && state.isSideSolidFullSquare(world, pos, dir) || bl2 || state.getBlock() instanceof SingleHeadSignalBlock;
     }
 
     @Nullable
