@@ -1,0 +1,7 @@
+{
+  "item.signal.signal_surveyor": "信號域監測儀",
+  "item.signal.signal_tuner": "信號配對儀",
+  "block.signal.single_head_signal": "單頭區間號誌",
+  "block.signal.distant_single_head_signal": "單頭預告號誌",
+  "block.signal.signal_box_receiver": "信號接收盒"
+}
