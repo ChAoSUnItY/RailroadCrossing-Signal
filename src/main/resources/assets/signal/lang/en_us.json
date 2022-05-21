@@ -11,7 +11,6 @@
   "tooltip.signal.related_tool_entry": "- %s",
   "tooltip.signal.signal_surveyor.line1": "Used as a binding tool to bind two block signals together.",
   "tooltip.signal.signal_tuner.line1": "Used as binding tool to bind a signal emitter to a signal receiver.",
-  "tooltip.signal.signal_tuner.line2": "For example: a block signal can be bound to signal box receiver.",
   "tooltip.signal.single_head_signal.line1": "Signal that emits status of belonging signal block (interval).",
   "tooltip.signal.single_head_signal.line2": "Block signal will search the nearest rail block up to 2 blocks horizontally,",
   "tooltip.signal.single_head_signal.line3": "range from 1 block higher to 4 blocks lower vertically and automatically bind rail block to the signal.",

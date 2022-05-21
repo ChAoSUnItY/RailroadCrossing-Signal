@@ -120,7 +120,6 @@ public class SignalSurveyorItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (Screen.hasShiftDown()) {
             tooltip.add(new TranslatableText("tooltip.signal.signal_tuner.line1"));
-            tooltip.add(new TranslatableText("tooltip.signal.signal_tuner.line2"));
         } else {
             tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
         }
