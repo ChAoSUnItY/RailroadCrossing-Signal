@@ -2,6 +2,7 @@ package chaos.unity.signal.common.item;
 
 import chaos.unity.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.signal.common.block.entity.ISignalReceiver;
+import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.entity.BlockEntity;
@@ -33,6 +34,19 @@ public class SignalTunerItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        var stack = user.getStackInHand(hand);
+        var nbt = stack.getOrCreateNbt();
+
+        if (user.isSneaking() && nbt.contains("emitter_pos")) {
+            /// Reset current session
+            if (world.getBlockEntity(NbtHelper.toBlockPos(nbt.getCompound("emitter_pos"))) instanceof ISignalEmitter emitter) {
+                emitter.endTuningSession(null);
+            }
+            nbt.remove("emitter_pos");
+
+            if (world.isClient)
+                user.sendMessage(new LiteralText("Current tuning session terminated").formatted(Formatting.YELLOW), false);
+        }
         return super.use(world, user, hand);
     }
 
