@@ -1,0 +1,14 @@
+{
+  "tooltip.rc_signal.shift_tip": "[按Shift鍵檢視]",
+  "tooltip.rc_signal.related_tools": "相關工具:",
+  "tooltip.rc_signal.signal_surveyor.line1": "用作綁定兩個區間號誌。",
+  "tooltip.rc_signal.signal_tuner.line1": "用作綁定信號發送器至信號接收器。",
+  "tooltip.rc_signal.single_head_signal.line1": "信號發送器，發送所屬號誌區間的狀態信號。",
+  "tooltip.rc_signal.distant_single_head_signal.line1": "信號接收器，顯示綁定的信號發送器的信號。",
+  "tooltip.rc_signal.signal_box_receiver.line1": "信號接收器，接受信號為預期信號時將充能。",
+  "item.rc_signal.signal_surveyor": "信號域監測儀",
+  "item.rc_signal.signal_tuner": "信號配對儀",
+  "block.rc_signal.single_head_signal": "單頭區間號誌",
+  "block.rc_signal.distant_single_head_signal": "單頭預告號誌",
+  "block.rc_signal.signal_box_receiver": "信號接收盒"
+}

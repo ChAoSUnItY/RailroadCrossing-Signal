@@ -16,9 +16,9 @@ public final class SignalBlocks {
     public static final DistantSingleHeadSignal DISTANT_SINGLE_HEAD_SIGNAL = new DistantSingleHeadSignal();
 
     public static void register() {
-        simple(SINGLE_HEAD_SIGNAL, new Identifier("signal", "single_head_signal"));
-        simple(SIGNAL_BOX_RECEIVER, new Identifier("signal", "signal_box_receiver"));
-        simple(DISTANT_SINGLE_HEAD_SIGNAL, new Identifier("signal", "distant_single_head_signal"));
+        simple(SINGLE_HEAD_SIGNAL, new Identifier("rc_signal", "single_head_signal"));
+        simple(SIGNAL_BOX_RECEIVER, new Identifier("rc_signal", "signal_box_receiver"));
+        simple(DISTANT_SINGLE_HEAD_SIGNAL, new Identifier("rc_signal", "distant_single_head_signal"));
     }
 
     private static <T extends Block> void simple(T block, Identifier id) {

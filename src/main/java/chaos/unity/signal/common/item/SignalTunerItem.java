@@ -45,7 +45,7 @@ public class SignalTunerItem extends Item {
             nbt.remove("emitter_pos");
 
             if (world.isClient)
-                user.sendMessage(new TranslatableText("chat.signal.tuning_terminated").formatted(Formatting.YELLOW), false);
+                user.sendMessage(new TranslatableText("chat.rc_signal.tuning_terminated").formatted(Formatting.YELLOW), false);
         }
         return super.use(world, user, hand);
     }
@@ -71,16 +71,16 @@ public class SignalTunerItem extends Item {
                     receiver.setReceivingOwnerPos(emitterPos);
 
                     if (world.isClient)
-                        player.sendMessage(new TranslatableText("chat.signal.tuning_success").formatted(Formatting.GREEN), false);
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_success").formatted(Formatting.GREEN), false);
                 } else {
                     // Invalid session: original signal emitter does not exist
                     if (world.isClient)
-                        player.sendMessage(new TranslatableText("chat.signal.tuning_invalid.original_lost").formatted(Formatting.RED), false);
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_invalid.original_lost").formatted(Formatting.RED), false);
                 }
             } else {
                 // Invalid session: wrong tuning order, it must click on signal emitter first
                 if (world.isClient)
-                    player.sendMessage(new TranslatableText("chat.signal.tuning_invalid.wrong_order").formatted(Formatting.RED), false);
+                    player.sendMessage(new TranslatableText("chat.rc_signal.tuning_invalid.wrong_order").formatted(Formatting.RED), false);
             }
         } else if (blockEntity instanceof ISignalEmitter emitter) {
             if (nbt.contains("emitter_pos")) {
@@ -92,13 +92,13 @@ public class SignalTunerItem extends Item {
                     nbt.remove("emitter_pos");
 
                     if (world.isClient)
-                        player.sendMessage(new TranslatableText("chat.signal.tuning_terminated").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_terminated").formatted(Formatting.YELLOW), false);
                 } else {
                     // Abandon current session and create new session
                     nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
-                        player.sendMessage(new TranslatableText("chat.signal.tuning_restart").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_restart").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
@@ -106,7 +106,7 @@ public class SignalTunerItem extends Item {
                 nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
-                    player.sendMessage(new TranslatableText("chat.signal.tuning_start"), false);
+                    player.sendMessage(new TranslatableText("chat.rc_signal.tuning_start"), false);
             }
         }
 
@@ -116,9 +116,9 @@ public class SignalTunerItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableText("tooltip.signal.signal_surveyor.line1"));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.signal_surveyor.line1"));
         } else {
-            tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.shift_tip").formatted(Formatting.GOLD));
         }
     }
 }

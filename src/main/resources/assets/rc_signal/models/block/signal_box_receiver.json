@@ -3,8 +3,8 @@
 	"parent": "minecraft:block/cube_all",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "signal:block/signal_box",
-		"particle": "signal:block/signal_box"
+		"0": "rc_signal:block/signal_box",
+		"particle": "rc_signal:block/signal_box"
 	},
 	"elements": [
 		{

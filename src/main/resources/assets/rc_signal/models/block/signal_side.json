@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/cube_all",
 	"textures": {
-		"2": "signal:block/signal"
+		"2": "rc_signal:block/signal"
 	},
 	"elements": [
 		{

@@ -28,17 +28,17 @@ import java.util.List;
 
 public final class SignalNetworking {
     // UNIVERSAL (S2C/C2S)
-    public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("signal", "sync_block_entity");
+    public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("rc_signal", "sync_block_entity");
 
     // CLIENT 2 SERVER
-    public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("signal", "request_add_interval");
-    public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("signal", "request_highlight_signals");
+    public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("rc_signal", "request_add_interval");
+    public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("rc_signal", "request_highlight_signals");
 
     // SERVER 2 CLIENT
-    public static final Identifier CALLBACK_ADD_RESULT = new Identifier("signal", "callback_add_result");
-    public static final Identifier HIGHLIGHT_SIGNAL_NO_BOUND = new Identifier("signal", "highlight_signal_no_bound");
-    public static final Identifier HIGHLIGHT_SIGNAL = new Identifier("signal", "highlight_signal");
-    public static final Identifier HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("signal", "highlight_interval_instance");
+    public static final Identifier CALLBACK_ADD_RESULT = new Identifier("rc_signal", "callback_add_result");
+    public static final Identifier HIGHLIGHT_SIGNAL_NO_BOUND = new Identifier("rc_signal", "highlight_signal_no_bound");
+    public static final Identifier HIGHLIGHT_SIGNAL = new Identifier("rc_signal", "highlight_signal");
+    public static final Identifier HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("rc_signal", "highlight_interval_instance");
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(SYNC_BLOCK_ENTITY, SignalNetworking::syncBlockEntity);

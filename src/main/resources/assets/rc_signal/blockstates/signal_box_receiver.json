@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "rc_signal:block/signal_box_receiver"
+    }
+  }
+}

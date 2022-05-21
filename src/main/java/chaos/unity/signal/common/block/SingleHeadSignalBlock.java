@@ -149,12 +149,12 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Override
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableText("tooltip.signal.single_head_signal.line1"));
-            tooltip.add(new TranslatableText("tooltip.signal.related_tools"));
-            tooltip.add(new TranslatableText("tooltip.signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_SURVEYOR_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
-            tooltip.add(new TranslatableText("tooltip.signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_TUNER_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.single_head_signal.line1"));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.related_tools"));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_SURVEYOR_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_TUNER_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
         } else {
-            tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.shift_tip").formatted(Formatting.GOLD));
         }
     }
 }

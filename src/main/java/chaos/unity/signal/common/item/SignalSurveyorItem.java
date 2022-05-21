@@ -43,7 +43,7 @@ public class SignalSurveyorItem extends Item {
             nbt.remove("signal_pos");
 
             if (world.isClient)
-                user.sendMessage(new TranslatableText("chat.signal.survey_terminated").formatted(Formatting.YELLOW), false);
+                user.sendMessage(new TranslatableText("chat.rc_signal.survey_terminated").formatted(Formatting.YELLOW), false);
         }
         return super.use(world, user, hand);
     }
@@ -66,21 +66,21 @@ public class SignalSurveyorItem extends Item {
                         nbt.remove("signal_pos");
 
                         if (world.isClient)
-                            player.sendMessage(new TranslatableText("chat.signal.survey_terminated").formatted(Formatting.YELLOW), false);
+                            player.sendMessage(new TranslatableText("chat.rc_signal.survey_terminated").formatted(Formatting.YELLOW), false);
                     } else {
                         if (!originalSignalBE.hasRail()) {
                             if (world.isClient)
-                                player.sendMessage(new TranslatableText("chat.signal.survey_invalid.previous_unbound").formatted(Formatting.RED), false);
+                                player.sendMessage(new TranslatableText("chat.rc_signal.survey_invalid.previous_unbound").formatted(Formatting.RED), false);
                         } else if (!currentSignalBE.hasRail()) {
                             if (world.isClient)
-                                player.sendMessage(new TranslatableText("chat.signal.survey_invalid.current_unbound").formatted(Formatting.RED), false);
+                                player.sendMessage(new TranslatableText("chat.rc_signal.survey_invalid.current_unbound").formatted(Formatting.RED), false);
                         } else {
                             var interval = Interval.getInterval(world, originalSignalBE, currentSignalBE);
 
                             if (interval == null) {
                                 // Invalid interval
                                 if (world.isClient)
-                                    player.sendMessage(new TranslatableText("chat.signal.survey_invalid.invalid_signal_block").formatted(Formatting.RED), false);
+                                    player.sendMessage(new TranslatableText("chat.rc_signal.survey_invalid.invalid_signal_block").formatted(Formatting.RED), false);
                             } else {
                                 // Complete session
                                 if (world instanceof ServerWorld serverWorld) {
@@ -108,7 +108,7 @@ public class SignalSurveyorItem extends Item {
                                 }
 
                                 if (world.isClient)
-                                    player.sendMessage(new TranslatableText("chat.signal.survey_success").formatted(Formatting.GREEN), false);
+                                    player.sendMessage(new TranslatableText("chat.rc_signal.survey_success").formatted(Formatting.GREEN), false);
                             }
                         }
 
@@ -120,7 +120,7 @@ public class SignalSurveyorItem extends Item {
                     nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
-                        player.sendMessage(new TranslatableText("chat.signal.survey_restart").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.rc_signal.survey_restart").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
@@ -128,7 +128,7 @@ public class SignalSurveyorItem extends Item {
                 nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
-                    player.sendMessage(new TranslatableText("chat.signal.survey_start"), false);
+                    player.sendMessage(new TranslatableText("chat.rc_signal.survey_start"), false);
             }
 
             return ActionResult.SUCCESS;
@@ -139,9 +139,9 @@ public class SignalSurveyorItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslatableText("tooltip.signal.signal_tuner.line1"));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.signal_tuner.line1"));
         } else {
-            tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.rc_signal.shift_tip").formatted(Formatting.GOLD));
         }
     }
 }

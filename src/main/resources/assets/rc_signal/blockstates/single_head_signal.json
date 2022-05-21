@@ -5,7 +5,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "uvlock": true
       }
     },
@@ -14,7 +14,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "y": 90,
         "uvlock": true
       }
@@ -24,7 +24,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "y": 180,
         "uvlock": true
       }
@@ -34,7 +34,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "y": 270,
         "uvlock": true
       }
@@ -44,7 +44,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "signal:block/signal_side",
+        "model": "rc_signal:block/signal_side",
         "uvlock": true
       }
     },
@@ -53,7 +53,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "signal:block/signal_side",
+        "model": "rc_signal:block/signal_side",
         "y": 90,
         "uvlock": true
       }
@@ -63,7 +63,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "signal:block/signal_side",
+        "model": "rc_signal:block/signal_side",
         "y": 180,
         "uvlock": true
       }
@@ -73,7 +73,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "signal:block/signal_side",
+        "model": "rc_signal:block/signal_side",
         "y": 270,
         "uvlock": true
       }
@@ -83,7 +83,7 @@
         "up": "true"
       },
       "apply": {
-        "model": "signal:block/signal_post",
+        "model": "rc_signal:block/signal_post",
         "x": 180,
         "uvlock": true
       }
@@ -93,7 +93,7 @@
         "down": "true"
       },
       "apply": {
-        "model": "signal:block/signal_post",
+        "model": "rc_signal:block/signal_post",
         "uvlock": true
       }
     }

@@ -5,7 +5,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "uvlock": true
       }
     },
@@ -14,7 +14,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "signal:block/single_head_signal",
+        "model": "rc_signal:block/single_head_signal",
         "y": 90,
         "uvlock": true
       }

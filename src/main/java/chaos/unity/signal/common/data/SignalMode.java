@@ -24,6 +24,6 @@ public enum SignalMode {
     }
 
     public @NotNull String getTranslationKey() {
-        return "component.signal." + name().toLowerCase(Locale.ROOT);
+        return "component.rc_signal." + name().toLowerCase(Locale.ROOT);
     }
 }

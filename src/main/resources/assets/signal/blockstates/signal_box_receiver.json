@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "": {
-      "model": "signal:block/signal_box_receiver"
-    }
-  }
-}
