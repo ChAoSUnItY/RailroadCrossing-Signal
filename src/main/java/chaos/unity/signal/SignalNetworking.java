@@ -16,6 +16,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -26,17 +27,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SignalNetworking {
+    // UNIVERSAL (S2C/C2S)
+    public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("signal", "sync_block_entity");
+
     // CLIENT 2 SERVER
     public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("signal", "request_add_interval");
     public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("signal", "request_highlight_signals");
+
     // SERVER 2 CLIENT
-    public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("signal", "sync_block_entity");
     public static final Identifier CALLBACK_ADD_RESULT = new Identifier("signal", "callback_add_result");
     public static final Identifier HIGHLIGHT_SIGNAL_NO_BOUND = new Identifier("signal", "highlight_signal_no_bound");
     public static final Identifier HIGHLIGHT_SIGNAL = new Identifier("signal", "highlight_signal");
     public static final Identifier HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("signal", "highlight_interval_instance");
 
     public static void register() {
+        ServerPlayNetworking.registerGlobalReceiver(SYNC_BLOCK_ENTITY, SignalNetworking::syncBlockEntity);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_HIGHLIGHT_SIGNALS, SignalNetworking::requestHighlightSignals);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_ADD_INTERVAL, SignalNetworking::requestAddInterval);
 
@@ -45,6 +50,25 @@ public final class SignalNetworking {
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL, SignalNetworking::highlightSignal);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_INTERVAL_INSTANCE, SignalNetworking::highlightIntervalInstance);
         ClientPlayNetworking.registerGlobalReceiver(CALLBACK_ADD_RESULT, SignalNetworking::callbackAddResult);
+    }
+
+    private static void syncBlockEntity(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        var pos = buf.readBlockPos();
+        var rawId = buf.readVarInt();
+        var nbt = buf.readNbt();
+        ServerWorld world;
+
+        if ((world = player.getWorld()) != null) {
+            server.execute(() -> {
+                BlockEntity blockEntity;
+
+                if ((blockEntity = world.getBlockEntity(pos)) != null && blockEntity.getType() == Registry.BLOCK_ENTITY_TYPE.get(rawId)) {
+                    blockEntity.readNbt(nbt);
+                    blockEntity.markDirty();
+                    world.updateNeighbors(pos, world.getBlockState(pos).getBlock());
+                }
+            });
+        }
     }
 
     private static void requestHighlightSignals(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

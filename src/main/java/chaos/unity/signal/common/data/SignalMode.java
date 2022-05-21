@@ -1,6 +1,9 @@
 package chaos.unity.signal.common.data;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
+import java.util.Locale;
 
 public enum SignalMode {
     BLINK_RED(Color.RED),
@@ -18,5 +21,9 @@ public enum SignalMode {
 
     public boolean isBlink() {
         return this == BLINK_RED || this == BLINK_YELLOW;
+    }
+
+    public @NotNull String getTranslationKey() {
+        return "component.signal." + name().toLowerCase(Locale.ROOT);
     }
 }

@@ -1,20 +1,27 @@
 package chaos.unity.signal.common.block;
 
+import chaos.unity.signal.client.screen.SignalBoxReceiverScreen;
 import chaos.unity.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.signal.common.item.SignalItems;
+import chaos.unity.signal.common.item.SignalTunerItem;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -30,6 +37,15 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
 
     public SignalBoxReceiverBlock() {
         super(Settings.of(Material.METAL));
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (!(player.getStackInHand(hand).getItem() instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity && world.isClient) {
+            MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
+        }
+
+        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Override
