@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "signal",
+  "id": "rc_signal",
   "version": "${version}",
-  "name": "Signal",
+  "name": "Railraod Crossing: Signal",
   "description": "",
   "authors": [],
   "contact": {},
@@ -18,7 +18,7 @@
     ]
   },
   "mixins": [
-    "signal.mixins.json"
+    "rc_signal.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.5",
