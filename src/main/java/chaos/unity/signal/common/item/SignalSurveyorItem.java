@@ -5,14 +5,22 @@ import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class SignalSurveyorItem extends Item {
@@ -106,5 +114,15 @@ public class SignalSurveyorItem extends Item {
             return ActionResult.SUCCESS;
         }
         return super.useOnBlock(context);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (Screen.hasShiftDown()) {
+            tooltip.add(new TranslatableText("tooltip.signal.signal_tuner.line1"));
+            tooltip.add(new TranslatableText("tooltip.signal.signal_tuner.line2"));
+        } else {
+            tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
+        }
     }
 }

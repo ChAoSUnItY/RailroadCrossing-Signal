@@ -4,25 +4,35 @@ import chaos.unity.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.SignalMode;
+import chaos.unity.signal.common.item.SignalItems;
 import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class SingleHeadSignalBlock extends HorizontalFacingBlock implements BlockEntityProvider, Waterloggable {
     static final VoxelShape COLLISION_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, 1, .75);
@@ -135,5 +145,17 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(Properties.NORTH, Properties.EAST, Properties.SOUTH, Properties.WEST, Properties.UP, Properties.DOWN, Properties.HORIZONTAL_FACING, Properties.WATERLOGGED);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        if (Screen.hasShiftDown()) {
+            tooltip.add(new TranslatableText("tooltip.signal.single_head_signal.line1"));
+            tooltip.add(new TranslatableText("tooltip.signal.related_tools"));
+            tooltip.add(new TranslatableText("tooltip.signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_SURVEYOR_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
+            tooltip.add(new TranslatableText("tooltip.signal.related_tool_entry", new TranslatableText(SignalItems.SIGNAL_TUNER_ITEM.getTranslationKey())).formatted(Formatting.GOLD));
+        } else {
+            tooltip.add(new TranslatableText("tooltip.signal.shift_tip").formatted(Formatting.GOLD));
+        }
     }
 }
