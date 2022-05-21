@@ -12,6 +12,7 @@
   "chat.signal.tuning_restart": "Starts a new tuning session (previous session abandoned)",
   "chat.signal.tuning_invalid.original_lost": "Invalid tuning session: original signal emitter does not exist",
   "chat.signal.tuning_invalid.wrong_order": "Invalid tuning session: wrong tuning order",
+  "screen.signal.signal_box_receiver.title": "Emit Redstone on Signal Mode",
   "component.signal.blink_red": "Blink red",
   "component.signal.red": "Red",
   "component.signal.blink_yellow": "Blink yellow",

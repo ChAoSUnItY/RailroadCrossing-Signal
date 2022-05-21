@@ -37,7 +37,7 @@ public class SignalBoxReceiverScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        int x = (width - 176) / 2, y = (height - 176) / 2;
+        int x = (width - 176) / 2, y = (height - 90) / 2;
         addButton(0, x + 12, y + 55, 70, SignalMode.BLINK_RED);
         addButton(1, x + 94, y + 55, 70, SignalMode.BLINK_YELLOW);
         addButton(2, x + 7, y + 30, 50, SignalMode.RED);
@@ -58,7 +58,7 @@ public class SignalBoxReceiverScreen extends Screen {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - 176) / 2, y = (height - 176) / 2;
+        int x = (width - 176) / 2, y = (height - 90) / 2;
         drawTexture(matrices, x, y, 0, 0, 176, 90);
     }
 
@@ -66,17 +66,19 @@ public class SignalBoxReceiverScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
+        drawCenteredTextWithShadow(matrices, textRenderer, getTitle().asOrderedText(), width / 2, (height - 90) / 2 + 7, 0xFFFFFF);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+        if (super.keyPressed(keyCode, scanCode, modifiers))
             return true;
-        }
+
         if (Objects.requireNonNull(client).options.inventoryKey.matchesKey(keyCode, scanCode)) {
             close();
             return true;
         }
+
         return true;
     }
 
