@@ -1,5 +1,6 @@
 package chaos.unity.signal.common.item;
 
+import chaos.unity.signal.common.block.entity.ISingleHeadSignal;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
@@ -7,6 +8,7 @@ import chaos.unity.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -17,6 +19,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +30,24 @@ import java.util.Objects;
 public class SignalSurveyorItem extends Item {
     public SignalSurveyorItem() {
         super(new FabricItemSettings().group(SignalItemGroups.COMMON_ITEM_GROUP).maxCount(1));
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        var stack = user.getStackInHand(hand);
+        var nbt = stack.getOrCreateNbt();
+
+        if (user.isSneaking() && nbt.contains("signal_pos")) {
+            /// Reset current session
+            if (world.getBlockEntity(NbtHelper.toBlockPos(nbt.getCompound("signal_pos"))) instanceof SingleHeadSignalBlockEntity originalSignalBE) {
+                originalSignalBE.endSurveySession(null);
+            }
+            nbt.remove("signal_pos");
+
+            if (world.isClient)
+                user.sendMessage(new LiteralText("Current survey session terminated").formatted(Formatting.YELLOW), false);
+        }
+        return super.use(world, user, hand);
     }
 
     @Override
