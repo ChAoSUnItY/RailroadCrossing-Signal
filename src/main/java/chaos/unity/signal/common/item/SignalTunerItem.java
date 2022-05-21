@@ -45,7 +45,7 @@ public class SignalTunerItem extends Item {
             nbt.remove("emitter_pos");
 
             if (world.isClient)
-                user.sendMessage(new LiteralText("Current tuning session terminated").formatted(Formatting.YELLOW), false);
+                user.sendMessage(new TranslatableText("chat.signal.tuning_terminated").formatted(Formatting.YELLOW), false);
         }
         return super.use(world, user, hand);
     }
@@ -56,7 +56,7 @@ public class SignalTunerItem extends Item {
         var pos = context.getBlockPos();
         var world = context.getWorld();
         var nbt = context.getStack().getOrCreateNbt();
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        var blockEntity = world.getBlockEntity(pos);
 
         if (blockEntity instanceof ISignalReceiver receiver) {
             if (nbt.contains("emitter_pos")) {
@@ -71,16 +71,16 @@ public class SignalTunerItem extends Item {
                     receiver.setReceivingOwnerPos(emitterPos);
 
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Successfully complete tuning session").formatted(Formatting.GREEN), false);
+                        player.sendMessage(new TranslatableText("chat.signal.tuning_success").formatted(Formatting.GREEN), false);
                 } else {
                     // Invalid session: original signal emitter does not exist
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Invalid tuning session: original signal emitter does not exist").formatted(Formatting.RED), false);
+                        player.sendMessage(new TranslatableText("chat.signal.tuning_invalid.original_lost").formatted(Formatting.RED), false);
                 }
             } else {
                 // Invalid session: wrong tuning order, it must click on signal emitter first
                 if (world.isClient)
-                    player.sendMessage(new LiteralText("Invalid tuning session: wrong tuning order").formatted(Formatting.RED), false);
+                    player.sendMessage(new TranslatableText("chat.signal.tuning_invalid.wrong_order").formatted(Formatting.RED), false);
             }
         } else if (blockEntity instanceof ISignalEmitter emitter) {
             if (nbt.contains("emitter_pos")) {
@@ -92,13 +92,13 @@ public class SignalTunerItem extends Item {
                     nbt.remove("emitter_pos");
 
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Current tuning session terminated").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.signal.tuning_terminated").formatted(Formatting.YELLOW), false);
                 } else {
                     // Abandon current session and create new session
                     nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Starts a new tuning session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.signal.tuning_restart").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
@@ -106,7 +106,7 @@ public class SignalTunerItem extends Item {
                 nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
-                    player.sendMessage(new LiteralText("Starts a new tuning session"), false);
+                    player.sendMessage(new TranslatableText("chat.signal.tuning_start"), false);
             }
         }
 

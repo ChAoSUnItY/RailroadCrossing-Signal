@@ -1,6 +1,5 @@
 package chaos.unity.signal.common.item;
 
-import chaos.unity.signal.common.block.entity.ISingleHeadSignal;
 import chaos.unity.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.signal.common.data.Interval;
 import chaos.unity.signal.common.itemgroup.SignalItemGroups;
@@ -14,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -45,7 +43,7 @@ public class SignalSurveyorItem extends Item {
             nbt.remove("signal_pos");
 
             if (world.isClient)
-                user.sendMessage(new LiteralText("Current survey session terminated").formatted(Formatting.YELLOW), false);
+                user.sendMessage(new TranslatableText("chat.signal.survey_terminated").formatted(Formatting.YELLOW), false);
         }
         return super.use(world, user, hand);
     }
@@ -68,21 +66,21 @@ public class SignalSurveyorItem extends Item {
                         nbt.remove("signal_pos");
 
                         if (world.isClient)
-                            player.sendMessage(new LiteralText("Current survey session terminated").formatted(Formatting.YELLOW), false);
+                            player.sendMessage(new TranslatableText("chat.signal.survey_terminated").formatted(Formatting.YELLOW), false);
                     } else {
                         if (!originalSignalBE.hasRail()) {
                             if (world.isClient)
-                                player.sendMessage(new LiteralText("Previous signal is not bound to any rail").formatted(Formatting.RED), false);
+                                player.sendMessage(new TranslatableText("chat.signal.survey_invalid.previous_unbound").formatted(Formatting.RED), false);
                         } else if (!currentSignalBE.hasRail()) {
                             if (world.isClient)
-                                player.sendMessage(new LiteralText("Current signal is not bound to any rail").formatted(Formatting.RED), false);
+                                player.sendMessage(new TranslatableText("chat.signal.survey_invalid.current_unbound").formatted(Formatting.RED), false);
                         } else {
                             var interval = Interval.getInterval(world, originalSignalBE, currentSignalBE);
 
                             if (interval == null) {
                                 // Invalid interval
                                 if (world.isClient)
-                                    player.sendMessage(new LiteralText("Invalid signal interval").formatted(Formatting.RED), false);
+                                    player.sendMessage(new TranslatableText("chat.signal.survey_invalid.invalid_signal_block").formatted(Formatting.RED), false);
                             } else {
                                 // Complete session
                                 if (world instanceof ServerWorld serverWorld) {
@@ -110,7 +108,7 @@ public class SignalSurveyorItem extends Item {
                                 }
 
                                 if (world.isClient)
-                                    player.sendMessage(new LiteralText("Successfully create signal interval").formatted(Formatting.GREEN), false);
+                                    player.sendMessage(new TranslatableText("chat.signal.survey_success").formatted(Formatting.GREEN), false);
                             }
                         }
 
@@ -122,7 +120,7 @@ public class SignalSurveyorItem extends Item {
                     nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                     if (world.isClient)
-                        player.sendMessage(new LiteralText("Starts a new survey session (previous session abandoned)").formatted(Formatting.YELLOW), false);
+                        player.sendMessage(new TranslatableText("chat.signal.survey_restart").formatted(Formatting.YELLOW), false);
                 }
             } else {
                 // Create a new session
@@ -130,7 +128,7 @@ public class SignalSurveyorItem extends Item {
                 nbt.put("signal_pos", NbtHelper.fromBlockPos(pos));
 
                 if (world.isClient)
-                    player.sendMessage(new LiteralText("Starts a new survey session"), false);
+                    player.sendMessage(new TranslatableText("chat.signal.survey_start"), false);
             }
 
             return ActionResult.SUCCESS;
