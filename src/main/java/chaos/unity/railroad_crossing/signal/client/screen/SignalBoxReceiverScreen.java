@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class SignalBoxReceiverScreen extends Screen {
-    private static final Identifier TEXTURE = new Identifier("signal", "textures/gui/container/generic_container.png");
+    private static final Identifier TEXTURE = new Identifier("rc_signal", "textures/gui/container/generic_container.png");
     private final ButtonWidget[] buttonWidgets = new ButtonWidget[5];
     private int previousInactiveButtonIndex;
     private final SignalBoxReceiverBlockEntity blockEntity;
 
     public SignalBoxReceiverScreen(SignalBoxReceiverBlockEntity blockEntity) {
-        super(new TranslatableText("screen.signal.signal_box_receiver.title"));
+        super(new TranslatableText("rc_signal.signal.signal_box_receiver.title"));
 
         this.blockEntity = blockEntity;
     }
