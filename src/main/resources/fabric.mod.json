@@ -7,7 +7,7 @@
   "authors": [],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/signal/icon.png",
+  "icon": "assets/rc_signal/textures/RCSignalLogo.png",
   "environment": "*",
   "entrypoints": {
     "client": [
@@ -21,6 +21,7 @@
     "rc_signal.mixins.json"
   ],
   "depends": {
+    "rc_core": "<0.1.1.0",
     "fabricloader": ">=0.14.5",
     "fabric": "*",
     "minecraft": "1.18.2"
