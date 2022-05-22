@@ -18,6 +18,7 @@
   "component.rc_signal.blink_yellow": "Blink yellow",
   "component.rc_signal.yellow": "Yellow",
   "component.rc_signal.green": "Green",
+  "itemGroup.rc_signal.common": "Railroad Crossing: Signal",
   "tooltip.rc_signal.shift_tip": "[Press shift to view]",
   "tooltip.rc_signal.when_placed": "When placed:",
   "tooltip.rc_signal.when_bound": "When bound:",
