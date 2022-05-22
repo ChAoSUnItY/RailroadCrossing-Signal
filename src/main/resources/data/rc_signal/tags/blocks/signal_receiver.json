@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "rc_signal:distant_single_head_signal",
+    "rc_signal:signal_box_receiver"
+  ]
+}

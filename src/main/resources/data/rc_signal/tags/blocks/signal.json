@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "rc_signal:single_head_signal",
+    "rc_signal:distant_single_head_signal"
+  ]
+}
