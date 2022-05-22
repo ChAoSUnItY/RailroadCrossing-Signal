@@ -10,14 +10,12 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -30,10 +28,12 @@ import java.util.function.BiConsumer;
  */
 public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
                        @NotNull List<@NotNull BlockPos> intervalPath,
+                       @NotNull Set<@NotNull ChunkPos> passedChunks,
                        @NotNull Interval.EntityStatus entityStatus) {
     public Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPosB,
-                    @NotNull List<@NotNull BlockPos> intervalPath) {
-        this(signalPosA, signalPosB, intervalPath, new EntityStatus());
+                    @NotNull List<@NotNull BlockPos> intervalPath,
+                    @NotNull Set<@NotNull ChunkPos> passedChunks) {
+        this(signalPosA, signalPosB, intervalPath, passedChunks, new EntityStatus());
     }
 
     /**
@@ -147,25 +147,42 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
     public static Interval readNbt(NbtCompound nbt) {
         BlockPos signalAPos = NbtHelper.toBlockPos(nbt.getCompound("signal_a_pos")), signalBPos = NbtHelper.toBlockPos(nbt.getCompound("signal_b_pos"));
         List<BlockPos> intervalPath = new ArrayList<>();
+        Set<ChunkPos> passedChunks = new HashSet<>();
 
         for (var pos : nbt.getList("interval_path", NbtElement.COMPOUND_TYPE)) {
             intervalPath.add(NbtHelper.toBlockPos((NbtCompound) pos));
         }
 
-        return new Interval(signalAPos, signalBPos, intervalPath);
+        for (var pos : nbt.getList("passed_chunks", NbtElement.COMPOUND_TYPE)) {
+            var chunkPos = ((NbtCompound) pos);
+            int x = chunkPos.getInt("x"), z = chunkPos.getInt("z");
+
+            passedChunks.add(new ChunkPos(x, z));
+        }
+
+        return new Interval(signalAPos, signalBPos, intervalPath, passedChunks);
     }
 
     public NbtCompound writeNbt() {
         var compound = new NbtCompound();
         compound.put("signal_a_pos", NbtHelper.fromBlockPos(signalPosA));
         compound.put("signal_b_pos", NbtHelper.fromBlockPos(signalPosB));
-        var intervalPath = new NbtList();
+        NbtList intervalPath = new NbtList(), passedChunks = new NbtList();
 
         for (var pos : this.intervalPath) {
             intervalPath.add(NbtHelper.fromBlockPos(pos));
         }
 
+        for (var pos : this.passedChunks) {
+            var chunkPosCompound = new NbtCompound();
+            chunkPosCompound.putInt("x", pos.x);
+            chunkPosCompound.putInt("z", pos.z);
+
+            passedChunks.add(chunkPosCompound);
+        }
+
         compound.put("interval_path", intervalPath);
+        compound.put("passed_chunks", passedChunks);
 
         return compound;
     }
@@ -198,6 +215,7 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
 
     private static Interval findIntervalPath(final World world, final BlockPos signalPosA, final BlockPos signalPosB, final BlockPos startPos, final int start, final int end, BiConsumer<BlockPos.Mutable, Integer> setter) {
         var intervalPath = new ArrayList<BlockPos>();
+        var passedChunks = new HashSet<ChunkPos>();
         var blockPosPool = startPos.mutableCopy();
 
         for (var i = start; i <= end; i++) {
@@ -207,7 +225,9 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
 
             for (var j = -1; j < 2; j++) {
                 if (world.getBlockState(blockPosPool.setY(y - j)).getBlock() instanceof AbstractRailBlock) {
-                    intervalPath.add(new BlockPos(blockPosPool));
+                    var pos = blockPosPool.toImmutable();
+                    intervalPath.add(pos);
+                    passedChunks.add(new ChunkPos(pos));
                     found = true;
                     break;
                 }
@@ -218,7 +238,7 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
                 return null;
         }
 
-        return new Interval(new BlockPos(signalPosA), new BlockPos(signalPosB), intervalPath);
+        return new Interval(new BlockPos(signalPosA), new BlockPos(signalPosB), intervalPath, passedChunks);
     }
 
     public static List<BlockPos> findIntervalPath(final World world, final BlockPos startPos, final int start, final int end, BiConsumer<BlockPos.Mutable, Integer> setter) {

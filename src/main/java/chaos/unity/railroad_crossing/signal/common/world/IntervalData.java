@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,15 +47,19 @@ public class IntervalData extends PersistentState {
     }
 
     public @Nullable Interval getByIntervalPath(BlockPos pos) {
+        var chunkPos = new ChunkPos(pos);
+
         for (Interval interval : intervals)
-            if (interval.intervalPath().contains(pos))
+            if (interval.passedChunks().contains(chunkPos) && interval.intervalPath().contains(pos))
                 return interval;
         return null;
     }
 
     public @Nullable Interval removeByIntervalPath(BlockPos pos) {
+        var chunkPos = new ChunkPos(pos);
+
         for (var i = 0; i < intervals.size(); i++)
-            if (intervals.get(i).intervalPath().contains(pos))
+            if (intervals.get(i).passedChunks().contains(chunkPos) && intervals.get(i).intervalPath().contains(pos))
                 return intervals.remove(i);
         return null;
     }

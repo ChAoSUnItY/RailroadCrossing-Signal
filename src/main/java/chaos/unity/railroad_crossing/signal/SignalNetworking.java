@@ -21,10 +21,13 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class SignalNetworking {
     // UNIVERSAL (S2C/C2S)
@@ -190,6 +193,10 @@ public final class SignalNetworking {
         for (var pos : interval.intervalPath())
             buf.writeBlockPos(pos);
 
+        buf.writeInt(interval.passedChunks().size());
+
+        for (var pos : interval.passedChunks())
+            buf.writeChunkPos(pos);
     }
 
     public static Interval readInterval(PacketByteBuf buf) {
@@ -200,7 +207,12 @@ public final class SignalNetworking {
         for (int i = 0; i < pathLength; i++) {
             intervalPath.add(buf.readBlockPos());
         }
+        var passedChunkCount = buf.readInt();
+        Set<ChunkPos> passedChunks = new HashSet<>();
+        for (int i = 0; i < passedChunkCount; i++) {
+            passedChunks.add(buf.readChunkPos());
+        }
 
-        return new Interval(signalPosA, signalPosB, intervalPath);
+        return new Interval(signalPosA, signalPosB, intervalPath, passedChunks);
     }
 }
