@@ -11,10 +11,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "chaos.unity.signal.client.SignalClient"
+      "chaos.unity.railroad_crossing.signal.client.SignalClient"
     ],
     "main": [
-      "chaos.unity.signal.Signal"
+      "chaos.unity.railroad_crossing.signal.Signal"
     ]
   },
   "mixins": [
