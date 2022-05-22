@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Railraod Crossing: Signal",
   "description": "",
-  "authors": [],
+  "authors": ["ChAoS_UnItY"],
   "contact": {},
   "license": "MIT",
   "icon": "assets/rc_signal/textures/RCSignalLogo.png",
