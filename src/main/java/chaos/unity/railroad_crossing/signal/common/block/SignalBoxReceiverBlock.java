@@ -2,6 +2,7 @@ package chaos.unity.railroad_crossing.signal.common.block;
 
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.item.SignalSurveyorItem;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
 import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScreen;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
@@ -43,7 +44,9 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!(player.getStackInHand(hand).getItem() instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity && world.isClient) {
+        var item = player.getStackInHand(hand).getItem();
+
+        if (!(item instanceof SignalTunerItem || item instanceof SignalSurveyorItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity && world.isClient) {
             MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
         }
 
