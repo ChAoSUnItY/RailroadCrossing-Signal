@@ -2,20 +2,19 @@ package chaos.unity.signal.common.block;
 
 import chaos.unity.signal.client.screen.SignalBoxReceiverScreen;
 import chaos.unity.signal.common.block.entity.ISignalEmitter;
-import chaos.unity.signal.common.block.entity.ISignalReceiver;
-import chaos.unity.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.signal.common.item.SignalItems;
 import chaos.unity.signal.common.item.SignalTunerItem;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -28,15 +27,18 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider, ISignalReceiverProvider {
+public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider, ISignalReceiverProvider, Waterloggable {
     public static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(0.125f, 0, 0.125f, 0.875f, 0.9375f, 0.875f);
 
     public SignalBoxReceiverBlock() {
         super(Settings.of(Material.METAL));
+
+        setDefaultState(getStateManager().getDefaultState().with(Properties.WATERLOGGED, false));
     }
 
     @Override
@@ -50,8 +52,20 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (newState.isOf(this))
+            return;
+
         unbind(world, pos);
         super.onStateReplaced(state, world, pos, newState, moved);
+    }
+
+    @Override
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(Properties.WATERLOGGED)) {
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
+
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
@@ -82,6 +96,11 @@ public class SignalBoxReceiverBlock extends Block implements BlockEntityProvider
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new SignalBoxReceiverBlockEntity(pos, state);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(Properties.WATERLOGGED);
     }
 
     @Override
