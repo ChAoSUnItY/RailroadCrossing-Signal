@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G#G",
+    "ECR",
+    "iii"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone_torch"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "rc_core:emitter_circuit"
+    },
+    "R": {
+      "item": "rc_core:receiver_circuit"
+    },
+    "G": {
+      "tag": "c:glass"
+    }
+  },
+  "result": {
+    "item": "rc_signal:signal_surveyor",
+    "count": 1
+  }
+}
