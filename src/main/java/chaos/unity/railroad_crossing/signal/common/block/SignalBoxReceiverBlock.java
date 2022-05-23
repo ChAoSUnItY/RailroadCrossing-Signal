@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@SuppressWarnings({"deprecation"})
 public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEntityProvider, ISignalReceiverProvider, Waterloggable {
     public static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(0.125f, 0, 0.125f, 0.875f, 0.9375f, 0.875f);
 
