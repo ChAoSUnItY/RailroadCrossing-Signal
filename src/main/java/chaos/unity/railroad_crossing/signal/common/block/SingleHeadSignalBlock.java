@@ -141,6 +141,11 @@ public class SingleHeadSignalBlock extends BlockWithEntity implements BlockEntit
         return state.with(ConnectingBlock.FACING_PROPERTIES.get(direction), this.canConnect(world, neighborPos, state.get(Properties.HORIZONTAL_FACING), direction.getOpposite()));
     }
 
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {

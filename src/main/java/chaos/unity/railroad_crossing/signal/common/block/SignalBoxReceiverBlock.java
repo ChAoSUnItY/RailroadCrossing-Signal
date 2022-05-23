@@ -95,6 +95,11 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEnti
         return DEFAULT_SHAPE;
     }
 
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
