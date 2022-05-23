@@ -1,11 +1,11 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
+import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScreen;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import chaos.unity.railroad_crossing.signal.common.item.SignalSurveyorItem;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
-import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScreen;
-import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -46,8 +46,13 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEnti
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var item = player.getStackInHand(hand).getItem();
 
-        if (!(item instanceof SignalTunerItem || item instanceof SignalSurveyorItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity && world.isClient) {
-            MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
+        if (!(item instanceof SignalTunerItem || item instanceof SignalSurveyorItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity) {
+            if (world.isClient) {
+                MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
+                return ActionResult.CONSUME;
+            } else {
+                return ActionResult.SUCCESS;
+            }
         }
 
         return super.onUse(state, world, pos, player, hand, hit);
@@ -63,7 +68,8 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEnti
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState
+            neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED)) {
             world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
@@ -112,7 +118,8 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEnti
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext
+            options) {
         if (Screen.hasShiftDown()) {
             tooltip.add(new TranslatableText("tooltip.rc_signal.signal_box_receiver.line1"));
             tooltip.add(new TranslatableText("tooltip.rc_signal.related_tools"));
