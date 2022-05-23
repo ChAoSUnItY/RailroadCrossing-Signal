@@ -1,11 +1,11 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
+import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SingleHeadSignalBlockEntity;
-import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
-import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
+import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -21,6 +21,8 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SingleHeadSignalBlock extends HorizontalFacingBlock implements BlockEntityProvider, Waterloggable {
+public class SingleHeadSignalBlock extends BlockWithEntity implements BlockEntityProvider, Waterloggable {
     static final VoxelShape COLLISION_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, 1, .75);
     static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, .75, .75);
 
@@ -90,6 +92,16 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
                 : DEFAULT_SHAPE;
     }
 
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(Properties.HORIZONTAL_FACING, rotation.rotate(state.get(Properties.HORIZONTAL_FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(Properties.HORIZONTAL_FACING)));
+    }
+
     protected boolean canConnect(WorldAccess world, BlockPos pos, Direction facingDir, Direction dir) {
         var state = world.getBlockState(pos);
         var block = state.getBlock();
@@ -138,7 +150,7 @@ public class SingleHeadSignalBlock extends HorizontalFacingBlock implements Bloc
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return BlockWithEntity.checkType(type, SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntity::tick);
+        return checkType(type, SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntity::tick);
     }
 
     @Override
