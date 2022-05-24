@@ -1,15 +1,23 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
+import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxConfigurationScreen;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISyncable;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxEmitterBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -20,6 +28,20 @@ import org.jetbrains.annotations.Nullable;
 public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISignalEmitterProvider {
     public SignalBoxEmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL));
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        var item = player.getStackInHand(Hand.MAIN_HAND).getItem();
+
+        if (!(item instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxEmitterBlockEntity blockEntity) {
+            if (world.isClient) {
+                MinecraftClient.getInstance().setScreen(new SignalBoxConfigurationScreen<>("screen.rc_signal.signal_box_emitter.title", blockEntity));
+            }
+            return ActionResult.SUCCESS;
+        }
+
+        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Override

@@ -34,6 +34,7 @@ public final class SignalNetworking {
     public static final Identifier SYNC_BLOCK_ENTITY = new Identifier("rc_signal", "sync_block_entity");
 
     // CLIENT 2 SERVER
+    public static final Identifier REQUEST_BLOCK_UPDATE = new Identifier("rc_signal", "request_block_update");
     public static final Identifier REQUEST_ADD_INTERVAL = new Identifier("rc_signal", "request_add_interval");
     public static final Identifier REQUEST_HIGHLIGHT_SIGNALS = new Identifier("rc_signal", "request_highlight_signals");
 
@@ -44,6 +45,7 @@ public final class SignalNetworking {
     public static final Identifier HIGHLIGHT_INTERVAL_INSTANCE = new Identifier("rc_signal", "highlight_interval_instance");
 
     public static void register() {
+        ServerPlayNetworking.registerGlobalReceiver(REQUEST_BLOCK_UPDATE, SignalNetworking::requestBlockUpdate);
         ServerPlayNetworking.registerGlobalReceiver(SYNC_BLOCK_ENTITY, SignalNetworking::syncBlockEntity);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_HIGHLIGHT_SIGNALS, SignalNetworking::requestHighlightSignals);
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_ADD_INTERVAL, SignalNetworking::requestAddInterval);
@@ -53,6 +55,15 @@ public final class SignalNetworking {
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_SIGNAL, SignalNetworking::highlightSignal);
         ClientPlayNetworking.registerGlobalReceiver(HIGHLIGHT_INTERVAL_INSTANCE, SignalNetworking::highlightIntervalInstance);
         ClientPlayNetworking.registerGlobalReceiver(CALLBACK_ADD_RESULT, SignalNetworking::callbackAddResult);
+    }
+
+    private static void requestBlockUpdate(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        var pos = buf.readBlockPos();
+        ServerWorld world;
+
+        if ((world = player.getWorld()) != null) {
+            server.execute(() -> world.updateNeighborsAlways(pos, world.getBlockState(pos).getBlock()));
+        }
     }
 
     private static void syncBlockEntity(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

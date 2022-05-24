@@ -13,6 +13,7 @@
   "chat.rc_signal.tuning_invalid.original_lost": "Invalid tuning session: original signal emitter does not exist",
   "chat.rc_signal.tuning_invalid.wrong_order": "Invalid tuning session: wrong tuning order",
   "screen.rc_signal.signal_box_receiver.title": "Emit Redstone on Signal Mode",
+  "screen.rc_signal.signal_box_emitter.title": "Emit Signal on Powered",
   "component.rc_signal.blink_red": "Blink red",
   "component.rc_signal.red": "Red",
   "component.rc_signal.blink_yellow": "Blink yellow",

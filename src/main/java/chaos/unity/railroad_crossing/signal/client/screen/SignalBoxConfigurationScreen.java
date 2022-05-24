@@ -1,8 +1,13 @@
 package chaos.unity.railroad_crossing.signal.client.screen;
 
-import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
+import chaos.unity.railroad_crossing.signal.SignalNetworking;
+import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalBox;
+import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxEmitterBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.block.entity.SyncableBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -13,14 +18,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class SignalBoxReceiverScreen extends Screen {
+public class SignalBoxConfigurationScreen<T extends SyncableBlockEntity & ISignalBox> extends Screen {
     private static final Identifier TEXTURE = new Identifier("rc_signal", "textures/gui/container/generic_container.png");
     private final ButtonWidget[] buttonWidgets = new ButtonWidget[5];
     private int previousInactiveButtonIndex;
-    private final SignalBoxReceiverBlockEntity blockEntity;
+    private final T blockEntity;
 
-    public SignalBoxReceiverScreen(SignalBoxReceiverBlockEntity blockEntity) {
-        super(new TranslatableText("screen.rc_signal.signal_box_receiver.title"));
+    public SignalBoxConfigurationScreen(String translationKey, T blockEntity) {
+        super(new TranslatableText(translationKey));
 
         this.blockEntity = blockEntity;
     }
@@ -28,7 +33,7 @@ public class SignalBoxReceiverScreen extends Screen {
     private void addButton(int index, int x, int y, int width, @NotNull SignalMode signalMode) {
         var buttonWidget = buttonWidgets[index] = addDrawableChild(new ButtonWidget(x, y, width, 20, new TranslatableText(signalMode.getTranslationKey()), button -> setSignalMode(index, button, signalMode)));
 
-        if (blockEntity.detectMode == signalMode) {
+        if (blockEntity.getSignal() == signalMode) {
             previousInactiveButtonIndex = index;
             buttonWidget.active = false;
         }
@@ -49,8 +54,15 @@ public class SignalBoxReceiverScreen extends Screen {
         buttonWidgets[previousInactiveButtonIndex].active = true;
         previousInactiveButtonIndex = index;
         buttonWidget.active = false;
-        blockEntity.detectMode = signalMode;
+        blockEntity.setSignal(signalMode);
         blockEntity.markDirtyAndSync();
+
+        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity) {
+            var buf = PacketByteBufs.create()
+                    .writeBlockPos(emitterBlockEntity.receiverPos);
+
+            ClientPlayNetworking.send(SignalNetworking.REQUEST_BLOCK_UPDATE, buf);
+        }
     }
 
     @Override

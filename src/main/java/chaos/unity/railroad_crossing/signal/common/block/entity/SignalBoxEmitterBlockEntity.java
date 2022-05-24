@@ -27,6 +27,12 @@ public class SignalBoxEmitterBlockEntity extends SyncableBlockEntity implements 
     }
 
     @Override
+    public void setSignal(@NotNull SignalMode signal) {
+        this.emittingSignalMode = signal;
+        markDirtyAndSync();
+    }
+
+    @Override
     public @Nullable SignalMode getSignal() {
         return getSignal(0);
     }

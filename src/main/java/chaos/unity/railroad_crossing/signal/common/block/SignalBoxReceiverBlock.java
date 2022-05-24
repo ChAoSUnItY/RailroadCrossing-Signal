@@ -1,6 +1,6 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
-import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScreen;
+import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxConfigurationScreen;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
@@ -42,7 +42,7 @@ public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements IS
 
         if (!(item instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity) {
             if (world.isClient) {
-                MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
+                MinecraftClient.getInstance().setScreen(new SignalBoxConfigurationScreen<>("screen.rc_signal.signal_box_receiver.title", blockEntity));
             }
             return ActionResult.SUCCESS;
         }
@@ -82,7 +82,7 @@ public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements IS
             if (ownerPos == null)
                 return 0;
 
-            return signalBoxReceiverBE.getReceivingSignal() == signalBoxReceiverBE.detectMode ? 15 : 0;
+            return signalBoxReceiverBE.getReceivingSignal() == signalBoxReceiverBE.detectSignal ? 15 : 0;
         }
 
         return 0;
