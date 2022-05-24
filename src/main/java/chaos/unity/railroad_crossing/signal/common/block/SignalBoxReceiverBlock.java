@@ -45,9 +45,9 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements BlockEnti
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        var item = player.getStackInHand(hand).getItem();
+        var item = player.getStackInHand(Hand.MAIN_HAND).getItem();
 
-        if (!(item instanceof SignalTunerItem || item instanceof SignalSurveyorItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity) {
+        if (!(item instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity) {
             if (world.isClient) {
                 MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
                 return ActionResult.CONSUME;

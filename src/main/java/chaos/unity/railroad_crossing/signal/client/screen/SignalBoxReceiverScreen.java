@@ -20,7 +20,7 @@ public class SignalBoxReceiverScreen extends Screen {
     private final SignalBoxReceiverBlockEntity blockEntity;
 
     public SignalBoxReceiverScreen(SignalBoxReceiverBlockEntity blockEntity) {
-        super(new TranslatableText("rc_signal.signal_box_receiver.title"));
+        super(new TranslatableText("screen.rc_signal.signal_box_receiver.title"));
 
         this.blockEntity = blockEntity;
     }
