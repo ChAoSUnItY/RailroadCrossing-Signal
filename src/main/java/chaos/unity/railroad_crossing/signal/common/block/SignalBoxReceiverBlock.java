@@ -1,7 +1,6 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
 import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScreen;
-import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
