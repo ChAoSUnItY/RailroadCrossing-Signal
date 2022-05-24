@@ -68,7 +68,7 @@ public final class SignalNetworking {
                 if ((blockEntity = world.getBlockEntity(pos)) != null && blockEntity.getType() == Registry.BLOCK_ENTITY_TYPE.get(rawId)) {
                     blockEntity.readNbt(nbt);
                     blockEntity.markDirty();
-                    world.updateNeighbors(pos, world.getBlockState(pos).getBlock());
+                    world.updateNeighborsAlways(pos, world.getBlockState(pos).getBlock());
                 }
             });
         }

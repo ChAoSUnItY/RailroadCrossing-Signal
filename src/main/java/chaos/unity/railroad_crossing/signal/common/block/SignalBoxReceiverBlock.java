@@ -44,10 +44,8 @@ public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements IS
         if (!(item instanceof SignalTunerItem) && world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity blockEntity) {
             if (world.isClient) {
                 MinecraftClient.getInstance().setScreen(new SignalBoxReceiverScreen(blockEntity));
-                return ActionResult.CONSUME;
-            } else {
-                return ActionResult.SUCCESS;
             }
+            return ActionResult.SUCCESS;
         }
 
         return super.onUse(state, world, pos, player, hand, hit);
@@ -80,12 +78,12 @@ public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements IS
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
         if (world.getBlockEntity(pos) instanceof SignalBoxReceiverBlockEntity signalBoxReceiverBE) {
-            BlockPos ownerPos = signalBoxReceiverBE.getReceivingOwnerPos();
+            BlockPos ownerPos = signalBoxReceiverBE.getEmitterPos();
 
             if (ownerPos == null)
                 return 0;
 
-            return world.getBlockEntity(ownerPos) instanceof ISignalEmitter emitter && emitter.getSignal(0) == signalBoxReceiverBE.detectMode ? 15 : 0;
+            return signalBoxReceiverBE.getReceivingSignal() == signalBoxReceiverBE.detectMode ? 15 : 0;
         }
 
         return 0;

@@ -1,8 +1,8 @@
 package chaos.unity.railroad_crossing.signal.common.block.entity;
 
-import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
 import chaos.unity.railroad_crossing.signal.common.block.SingleHeadSignalBlock;
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
+import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
 import chaos.unity.railroad_crossing.signal.mixin.BlockMixin;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
@@ -106,10 +106,10 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
         if (receiverPos != null) {
             // Take the ownership of current receiver
             if (world.getBlockEntity(receiverPos) instanceof ISignalReceiver receiver) {
-                receiver.setReceivingOwnerPos(null);
+                receiver.setEmitterPos(null);
             }
 
-            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
+            world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
             receiverPos = null;
         }
 
@@ -139,11 +139,11 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
 
         if (receiverPos != null) {
             if (this.receiverPos != null && world.getBlockEntity(this.receiverPos) instanceof ISignalReceiver receiver) {
-                receiver.setReceivingOwnerPos(null);
+                receiver.setEmitterPos(null);
             }
 
             this.receiverPos = receiverPos;
-            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
+            world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
 
         signalMode = pairedSignalPos != null ? SignalMode.GREEN : SignalMode.BLINK_RED;
@@ -161,7 +161,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
         this.signalMode = mode;
 
         if (receiverPos != null) {
-            world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
+            world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
     }
 

@@ -22,24 +22,27 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
 
     @Nullable
     @Override
-    public BlockPos getReceivingOwnerPos() {
+    public BlockPos getEmitterPos() {
         return receivingOwnerPos;
     }
 
     @Override
-    public void setReceivingOwnerPos(@NotNull BlockPos receivingOwnerPos) {
+    public void setEmitterPos(@Nullable BlockPos receivingOwnerPos) {
         if (world == null)
             return;
 
         this.receivingOwnerPos = receivingOwnerPos;
 
         markDirtyAndSync();
-        world.updateNeighbors(getPos(), world.getBlockState(getPos()).getBlock());
+        world.updateNeighborsAlways(getPos(), world.getBlockState(getPos()).getBlock());
     }
 
     @Override
-    public @NotNull SignalMode getReceivingSignal() {
-        if (receivingOwnerPos != null && world != null && world.getBlockEntity(receivingOwnerPos) instanceof ISignalEmitter emitter) {
+    public @Nullable SignalMode getReceivingSignal() {
+        if (world == null)
+            return ISignalReceiver.super.getReceivingSignal();
+
+        if (receivingOwnerPos != null && world.getBlockEntity(receivingOwnerPos) instanceof ISignalEmitter emitter) {
             return emitter.getSignal(0);
         }
 

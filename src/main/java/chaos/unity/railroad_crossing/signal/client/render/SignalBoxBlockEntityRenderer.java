@@ -1,6 +1,7 @@
 package chaos.unity.railroad_crossing.signal.client.render;
 
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
+import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -22,6 +23,9 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalReceive
     @Override
     public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var mode = entity.getReceivingSignal();
+
+        if (mode == null)
+            mode = SignalMode.BLINK_RED;
 
         if (mode.isBlink()) {
             // Renders solid color block for 10 ticks and renders nothing for the rest 10 ticks

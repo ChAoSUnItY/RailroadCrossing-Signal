@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings({"deprecation"})
-public class SingleHeadSignalBlock extends BlockWithEntity implements BlockEntityProvider, Waterloggable {
+public class SingleHeadSignalBlock extends BlockWithEntity implements Waterloggable {
     static final VoxelShape COLLISION_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, 1, .75);
     static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(.25, .25, .25, .75, .75, .75);
 
@@ -75,7 +75,7 @@ public class SingleHeadSignalBlock extends BlockWithEntity implements BlockEntit
                 }
             }
             if (sbe.receiverPos != null && world.getBlockEntity(sbe.receiverPos) instanceof ISignalReceiver receiver) {
-                receiver.setReceivingOwnerPos(null);
+                receiver.setEmitterPos(null);
             }
         }
         super.onStateReplaced(state, world, pos, newState, moved);

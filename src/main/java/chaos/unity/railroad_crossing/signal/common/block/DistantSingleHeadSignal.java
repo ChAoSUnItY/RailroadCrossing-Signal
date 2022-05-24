@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DistantSingleHeadSignal extends SingleHeadSignalBlock implements BlockEntityProvider, ISignalReceiverProvider {
+public class DistantSingleHeadSignal extends SingleHeadSignalBlock implements ISignalReceiverProvider {
     public DistantSingleHeadSignal() {
         super();
     }

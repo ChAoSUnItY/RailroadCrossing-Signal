@@ -43,6 +43,7 @@ public class SignalTunerItem extends Item {
             if (world.isClient)
                 user.sendMessage(new TranslatableText("chat.rc_signal.tuning_terminated").formatted(Formatting.YELLOW), false);
         }
+
         return super.use(world, user, hand);
     }
 
@@ -64,7 +65,7 @@ public class SignalTunerItem extends Item {
                     nbt.remove("emitter_pos");
 
                     signalEmitter.endTuningSession(pos);
-                    receiver.setReceivingOwnerPos(emitterPos);
+                    receiver.setEmitterPos(emitterPos);
 
                     if (world.isClient)
                         player.sendMessage(new TranslatableText("chat.rc_signal.tuning_success").formatted(Formatting.GREEN), false);

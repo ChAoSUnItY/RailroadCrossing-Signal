@@ -5,13 +5,13 @@ import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface ISignalReceiverProvider {
+public interface ISignalEmitterProvider {
     default void unbind(final World world, final BlockPos pos) {
-        if (world.getBlockEntity(pos) instanceof ISignalReceiver receiver) {
-            var receiverOwnerPos = receiver.getEmitterPos();
+        if (world.getBlockEntity(pos) instanceof ISignalEmitter emitter) {
+            var receiverOwnerPos = emitter.getReceiverPos();
 
-            if (receiverOwnerPos != null && world.getBlockEntity(receiverOwnerPos) instanceof ISignalEmitter emitter) {
-                emitter.setReceiverPos(null);
+            if (receiverOwnerPos != null && world.getBlockEntity(receiverOwnerPos) instanceof ISignalReceiver receiver) {
+                receiver.setEmitterPos(null);
             }
         }
     }
