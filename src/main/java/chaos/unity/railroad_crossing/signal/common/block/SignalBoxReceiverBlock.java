@@ -4,8 +4,8 @@ import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxReceiverScree
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalEmitter;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
-import chaos.unity.railroad_crossing.signal.common.item.SignalSurveyorItem;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -14,7 +14,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -25,7 +24,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -34,13 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings({"deprecation"})
-public class SignalBoxReceiverBlock extends BlockWithEntity implements ISignalReceiverProvider, Waterloggable {
-    public static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(0.125f, 0, 0.125f, 0.875f, 0.9375f, 0.875f);
-
+public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements ISignalReceiverProvider, Waterloggable {
     public SignalBoxReceiverBlock() {
-        super(Settings.of(Material.METAL));
-
-        setDefaultState(getStateManager().getDefaultState().with(Properties.WATERLOGGED, false));
+        super(FabricBlockSettings.of(Material.METAL));
     }
 
     @Override
@@ -111,11 +105,6 @@ public class SignalBoxReceiverBlock extends BlockWithEntity implements ISignalRe
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new SignalBoxReceiverBlockEntity(pos, state);
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.WATERLOGGED);
     }
 
     @Override

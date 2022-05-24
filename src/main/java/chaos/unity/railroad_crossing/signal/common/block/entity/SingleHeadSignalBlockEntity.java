@@ -25,7 +25,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
     public @Nullable BlockPos railBindPos;
     public @Nullable BlockPos pairedSignalPos;
     public @Nullable BlockPos receiverPos;
-    public @NotNull SignalMode mode = SignalMode.BLINK_RED;
+    public @NotNull SignalMode signalMode = SignalMode.BLINK_RED;
 
     public SingleHeadSignalBlockEntity(BlockPos pos, BlockState state) {
         super(SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, pos, state);
@@ -82,7 +82,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
      * Begin the linkage session, this will automatically deregister interval if it is part of interval instance
      */
     public void startSurveySession() {
-        mode = SignalMode.BLINK_YELLOW;
+        signalMode = SignalMode.BLINK_YELLOW;
 
         if (getWorld() instanceof ServerWorld serverWorld) {
             var intervalData = IntervalData.getOrCreate(serverWorld);
@@ -101,7 +101,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
         if (world == null)
             return;
 
-        mode = SignalMode.BLINK_YELLOW;
+        signalMode = SignalMode.BLINK_YELLOW;
 
         if (receiverPos != null) {
             // Take the ownership of current receiver
@@ -124,9 +124,9 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
     public void endSurveySession(@Nullable BlockPos signalPos) {
         if (signalPos != null) {
             pairedSignalPos = signalPos;
-            mode = SignalMode.GREEN;
+            signalMode = SignalMode.GREEN;
         } else {
-            mode = SignalMode.BLINK_RED;
+            signalMode = SignalMode.BLINK_RED;
         }
 
         markDirtyAndSync();
@@ -146,7 +146,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
             world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
 
-        mode = pairedSignalPos != null ? SignalMode.GREEN : SignalMode.BLINK_RED;
+        signalMode = pairedSignalPos != null ? SignalMode.GREEN : SignalMode.BLINK_RED;
 
         markDirtyAndSync();
     }
@@ -155,10 +155,10 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
         if (world == null)
             return;
 
-        if (this.mode == SignalMode.BLINK_YELLOW)
+        if (this.signalMode == SignalMode.BLINK_YELLOW)
             return; // Occupied by either surveying or tuning session
 
-        this.mode = mode;
+        this.signalMode = mode;
 
         if (receiverPos != null) {
             world.updateNeighbors(receiverPos, world.getBlockState(receiverPos).getBlock());
@@ -179,17 +179,17 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
 
     @Override
     public SignalMode[] getSignals() {
-        return new SignalMode[]{mode};
+        return new SignalMode[]{signalMode};
     }
 
     @Override
     public SignalMode getSignal(int index) {
-        return mode;
+        return signalMode;
     }
 
     @Override
     public @NotNull SignalMode getSignal() {
-        return mode;
+        return signalMode;
     }
 
     @Nullable
@@ -213,7 +213,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
             pairedSignalPos = NbtHelper.toBlockPos(nbt.getCompound("paired_signal_pos"));
         if (nbt.contains("receiver_pos"))
             receiverPos = NbtHelper.toBlockPos(nbt.getCompound("receiver_pos"));
-        mode = SignalMode.values[nbt.getInt("signal_mode")];
+        signalMode = SignalMode.values[nbt.getInt("signal_mode")];
         super.readNbt(nbt);
     }
 
@@ -225,7 +225,7 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
             nbt.put("paired_signal_pos", NbtHelper.fromBlockPos(pairedSignalPos));
         if (receiverPos != null)
             nbt.put("receiver_pos", NbtHelper.fromBlockPos(receiverPos));
-        nbt.putInt("signal_mode", mode.ordinal());
+        nbt.putInt("signal_mode", signalMode.ordinal());
         super.writeNbt(nbt);
     }
 

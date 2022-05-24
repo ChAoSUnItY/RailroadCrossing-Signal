@@ -56,12 +56,12 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
     public void markBlocked(final ServerWorld world, final AbstractMinecartEntity minecartEntity) {
         entityStatus.minecartEntities.compute(minecartEntity, (k, v) -> EntityStatus.Status.BLOCKING);
 
-        if (!entityStatus.signalForceLockA && world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+        if (!entityStatus.signalForceLockA && world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.RED) {
             sbe.setSignalMode(SignalMode.RED);
             sbe.markDirtyAndSync();
         }
 
-        if (!entityStatus.signalForceLockB && world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+        if (!entityStatus.signalForceLockB && world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.RED) {
             sbe.setSignalMode(SignalMode.RED);
             sbe.markDirtyAndSync();
         }
@@ -84,22 +84,22 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
                 : signalPosA.getX() - minecartPos.getX() > 0 ? direction == Direction.WEST : direction == Direction.EAST;
 
         if (isApproachingSignalA) {
-            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.YELLOW) {
                 sbe.setSignalMode(SignalMode.YELLOW);
                 sbe.markDirtyAndSync();
             }
 
-            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.RED) {
                 sbe.setSignalMode(SignalMode.RED);
                 sbe.markDirtyAndSync();
             }
         } else {
-            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.RED) {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.RED) {
                 sbe.setSignalMode(SignalMode.RED);
                 sbe.markDirtyAndSync();
             }
 
-            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.YELLOW) {
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.YELLOW) {
                 sbe.setSignalMode(SignalMode.YELLOW);
                 sbe.markDirtyAndSync();
             }
@@ -111,12 +111,12 @@ public record Interval(@NotNull BlockPos signalPosA, @NotNull BlockPos signalPos
 
         // If there's already at least one minecart blocking the interval, then skip the changing
         if (!entityStatus.isBlocked() && entityStatus.minecartEntities.isEmpty()) {
-            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+            if (world.getBlockEntity(signalPosA) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.GREEN) {
                 sbe.setSignalMode(SignalMode.GREEN);
                 sbe.markDirtyAndSync();
             }
 
-            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.mode != SignalMode.GREEN) {
+            if (world.getBlockEntity(signalPosB) instanceof SingleHeadSignalBlockEntity sbe && sbe.signalMode != SignalMode.GREEN) {
                 sbe.setSignalMode(SignalMode.GREEN);
                 sbe.markDirtyAndSync();
             }
