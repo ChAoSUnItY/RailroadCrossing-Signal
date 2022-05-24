@@ -57,7 +57,7 @@ public class SignalBoxConfigurationScreen<T extends SyncableBlockEntity & ISigna
         blockEntity.setSignal(signalMode);
         blockEntity.markDirtyAndSync();
 
-        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity) {
+        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity && emitterBlockEntity.receiverPos != null) {
             var buf = PacketByteBufs.create()
                     .writeBlockPos(emitterBlockEntity.receiverPos);
 
