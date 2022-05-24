@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings({"deprecation"})
 public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISignalEmitterProvider {
     public SignalBoxEmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL));
