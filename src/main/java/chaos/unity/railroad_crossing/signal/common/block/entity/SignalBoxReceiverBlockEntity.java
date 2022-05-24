@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncable, ISignalReceiver {
+public class SignalBoxReceiverBlockEntity extends SyncableBlockEntity implements ISignalReceiver, ISignalBox {
     public @Nullable BlockPos emitterPos;
     public @NotNull SignalMode detectMode = SignalMode.RED;
 
@@ -50,6 +50,11 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
     }
 
     @Override
+    public @Nullable SignalMode getSignal() {
+        return getReceivingSignal();
+    }
+
+    @Override
     public void readNbt(NbtCompound nbt) {
         if (nbt.contains("emitter_pos"))
             emitterPos = NbtHelper.toBlockPos(nbt.getCompound("emitter_pos"));
@@ -63,16 +68,5 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
             nbt.put("emitter_pos", NbtHelper.fromBlockPos(emitterPos));
         nbt.putInt("detect_mode", detectMode.ordinal());
         super.writeNbt(nbt);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
     }
 }

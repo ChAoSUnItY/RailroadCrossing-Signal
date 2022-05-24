@@ -28,8 +28,9 @@ public class SignalClient implements ClientModInitializer {
 
     private void registerBlockEntityRenderer() {
         BlockEntityRendererRegistry.register(SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
-        BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_RECEIVER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(SignalBlockEntities.DISTANT_SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_RECEIVER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_EMITTER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
     }
 
     private void registerClientEvent() {

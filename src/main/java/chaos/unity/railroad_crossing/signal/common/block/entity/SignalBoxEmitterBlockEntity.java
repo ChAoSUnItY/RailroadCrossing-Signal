@@ -2,17 +2,13 @@ package chaos.unity.railroad_crossing.signal.common.block.entity;
 
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.network.Packet;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SignalBoxEmitterBlockEntity extends BlockEntity implements ISyncable, ISignalEmitter {
+public class SignalBoxEmitterBlockEntity extends SyncableBlockEntity implements ISignalEmitter, ISignalBox {
     public @Nullable BlockPos receiverPos;
     public @NotNull SignalMode emittingSignalMode = SignalMode.BLINK_RED;
 
@@ -28,6 +24,11 @@ public class SignalBoxEmitterBlockEntity extends BlockEntity implements ISyncabl
     @Override
     public @Nullable SignalMode getSignal(int index) {
         return world != null && world.isReceivingRedstonePower(pos) ? emittingSignalMode : null;
+    }
+
+    @Override
+    public @Nullable SignalMode getSignal() {
+        return getSignal(0);
     }
 
     @Override
@@ -90,16 +91,5 @@ public class SignalBoxEmitterBlockEntity extends BlockEntity implements ISyncabl
             nbt.put("receiver_pos", NbtHelper.fromBlockPos(receiverPos));
         nbt.putInt("signal_mode", emittingSignalMode.ordinal());
         super.writeNbt(nbt);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
     }
 }

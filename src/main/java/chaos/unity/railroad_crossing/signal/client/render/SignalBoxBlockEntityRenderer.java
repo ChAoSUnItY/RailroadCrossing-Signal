@@ -1,5 +1,6 @@
 package chaos.unity.railroad_crossing.signal.client.render;
 
+import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalBox;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import net.minecraft.block.entity.BlockEntity;
@@ -9,7 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 
-public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalReceiver> extends SignalBlockEntityRenderer implements BlockEntityRenderer<T> {
+public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalBox> extends SignalBlockEntityRenderer implements BlockEntityRenderer<T> {
     private static final float[][][] PRECALCULATED_VERTEXES = {
             {{0.39375f, 0.625f, 0.8755f}, {0.39375f, 0.675f, 0.8755f}, {0.44375f, 0.675f, 0.8755f}, {0.44375f, 0.625f, 0.8755f}}, // SOUTH
             {{0.1245f, 0.625f, 0.39375f}, {0.1245f, 0.675f, 0.39375f}, {0.1245f, 0.675f, 0.44375f}, {0.1245f, 0.625f, 0.44375f}}, // WEST
@@ -22,10 +23,10 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalReceive
 
     @Override
     public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var mode = entity.getReceivingSignal();
+        var mode = entity.getSignal();
 
         if (mode == null)
-            mode = SignalMode.BLINK_RED;
+            return;
 
         if (mode.isBlink()) {
             // Renders solid color block for 10 ticks and renders nothing for the rest 10 ticks

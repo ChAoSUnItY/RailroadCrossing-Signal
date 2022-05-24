@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public final class SingleHeadSignalBlockEntity extends BlockEntity implements ISyncable, ISignalEmitter, ISingleHeadSignal {
+public final class SingleHeadSignalBlockEntity extends SyncableBlockEntity implements ISignalEmitter, ISingleHeadSignal {
     public @Nullable BlockPos railBindPos;
     public @Nullable BlockPos pairedSignalPos;
     public @Nullable BlockPos receiverPos;
@@ -227,16 +227,5 @@ public final class SingleHeadSignalBlockEntity extends BlockEntity implements IS
             nbt.put("receiver_pos", NbtHelper.fromBlockPos(receiverPos));
         nbt.putInt("signal_mode", signalMode.ordinal());
         super.writeNbt(nbt);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
     }
 }
