@@ -34,12 +34,8 @@ public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISi
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
         if (world.getBlockEntity(pos) instanceof SignalBoxEmitterBlockEntity emitterBlockEntity) {
             var receiverPos = emitterBlockEntity.getReceiverPos();
-            var receiverBE = world.getBlockEntity(receiverPos);
 
-            if (receiverBE instanceof ISignalReceiver && receiverBE instanceof ISyncable syncable) {
-                syncable.markDirtyAndSync();
-                world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
-            }
+            world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
     }
 
