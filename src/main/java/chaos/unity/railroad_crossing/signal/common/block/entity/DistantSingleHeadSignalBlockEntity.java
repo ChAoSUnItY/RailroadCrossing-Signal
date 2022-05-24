@@ -34,7 +34,7 @@ public final class DistantSingleHeadSignalBlockEntity extends BlockEntity implem
     @Override
     public @Nullable SignalMode getReceivingSignal() {
         if (world == null)
-            return ISignalReceiver.super.getReceivingSignal();
+            return null;
 
         if (emitterPos != null && world.getBlockEntity(emitterPos) instanceof ISignalEmitter emitter) {
             return emitter.getSignal(0);
@@ -44,10 +44,8 @@ public final class DistantSingleHeadSignalBlockEntity extends BlockEntity implem
     }
 
     @Override
-    public @NotNull SignalMode getSignal() {
-        var signal = getReceivingSignal();
-
-        return signal == null ? SignalMode.BLINK_RED : signal;
+    public @Nullable SignalMode getSignal() {
+        return getReceivingSignal();
     }
 
     @Override

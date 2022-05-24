@@ -23,12 +23,12 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalBox> ex
 
     @Override
     public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var mode = entity.getSignal();
+        var signal = entity.getSignal();
 
-        if (mode == null)
+        if (signal == null)
             return;
 
-        if (mode.isBlink()) {
+        if (signal.isBlink()) {
             // Renders solid color block for 10 ticks and renders nothing for the rest 10 ticks
             if ((entity.getWorld().getTime() + tickDelta) % 20 >= 10) return;
         }
@@ -41,7 +41,7 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalBox> ex
                     vertexConsumers.getBuffer(SignalLightRenderLayer.SIGNAL_LIGHT),
                     matrices.peek().getPositionMatrix(),
                     dir,
-                    mode.color
+                    signal.color
             );
         }
 

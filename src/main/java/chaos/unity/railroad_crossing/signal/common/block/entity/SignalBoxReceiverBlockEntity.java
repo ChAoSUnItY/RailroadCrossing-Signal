@@ -40,13 +40,13 @@ public class SignalBoxReceiverBlockEntity extends SyncableBlockEntity implements
     @Override
     public @Nullable SignalMode getReceivingSignal() {
         if (world == null)
-            return ISignalReceiver.super.getReceivingSignal();
+            return null;
 
         if (emitterPos != null && world.getBlockEntity(emitterPos) instanceof ISignalEmitter emitter) {
             return emitter.getSignal(0);
         }
 
-        return ISignalReceiver.super.getReceivingSignal();
+        return null;
     }
 
     @Override

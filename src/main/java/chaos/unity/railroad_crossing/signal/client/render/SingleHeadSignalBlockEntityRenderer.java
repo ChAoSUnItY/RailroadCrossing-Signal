@@ -24,7 +24,12 @@ public class SingleHeadSignalBlockEntityRenderer<T extends BlockEntity & ISingle
 
     @Override
     public void render(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (entity.getSignal().isBlink()) {
+        var signal = entity.getSignal();
+
+        if (signal == null)
+            return;
+
+        if (signal.isBlink()) {
             // Renders solid color block for 10 ticks and renders nothing for the rest 10 ticks
             if ((entity.getWorld().getTime() + tickDelta) % 20 >= 10) return;
         }
