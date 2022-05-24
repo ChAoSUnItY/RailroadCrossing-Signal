@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncable, ISignalReceiver {
-    public @Nullable BlockPos receivingOwnerPos;
+    public @Nullable BlockPos emitterPos;
     public @NotNull SignalMode detectMode = SignalMode.RED;
 
     public SignalBoxReceiverBlockEntity(BlockPos pos, BlockState state) {
@@ -23,7 +23,7 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
     @Nullable
     @Override
     public BlockPos getEmitterPos() {
-        return receivingOwnerPos;
+        return emitterPos;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
         if (world == null)
             return;
 
-        this.receivingOwnerPos = receivingOwnerPos;
+        this.emitterPos = receivingOwnerPos;
 
         markDirtyAndSync();
         world.updateNeighborsAlways(getPos(), world.getBlockState(getPos()).getBlock());
@@ -42,7 +42,7 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
         if (world == null)
             return ISignalReceiver.super.getReceivingSignal();
 
-        if (receivingOwnerPos != null && world.getBlockEntity(receivingOwnerPos) instanceof ISignalEmitter emitter) {
+        if (emitterPos != null && world.getBlockEntity(emitterPos) instanceof ISignalEmitter emitter) {
             return emitter.getSignal(0);
         }
 
@@ -51,16 +51,16 @@ public class SignalBoxReceiverBlockEntity extends BlockEntity implements ISyncab
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        if (nbt.contains("receiving_owner_pos"))
-            receivingOwnerPos = NbtHelper.toBlockPos(nbt.getCompound("receiving_owner_pos"));
+        if (nbt.contains("emitter_pos"))
+            emitterPos = NbtHelper.toBlockPos(nbt.getCompound("emitter_pos"));
         detectMode = SignalMode.values[nbt.getInt("detect_mode")];
         super.readNbt(nbt);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
-        if (receivingOwnerPos != null)
-            nbt.put("receiving_owner_pos", NbtHelper.fromBlockPos(receivingOwnerPos));
+        if (emitterPos != null)
+            nbt.put("emitter_pos", NbtHelper.fromBlockPos(emitterPos));
         nbt.putInt("detect_mode", detectMode.ordinal());
         super.writeNbt(nbt);
     }
