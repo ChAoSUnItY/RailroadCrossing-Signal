@@ -18,6 +18,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -38,6 +39,8 @@ import java.util.List;
 public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISignalEmitterProvider {
     public SignalBoxEmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL));
+
+        setDefaultState(getStateManager().getDefaultState().with(Properties.POWERED, false));
     }
 
     @Override
@@ -68,6 +71,11 @@ public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISi
         if (world.getBlockEntity(pos) instanceof SignalBoxEmitterBlockEntity emitterBlockEntity) {
             var receiverPos = emitterBlockEntity.getReceiverPos();
 
+            if (world.isReceivingRedstonePower(fromPos) && !state.get(Properties.POWERED)) {
+                world.setBlockState(pos, state.with(Properties.POWERED, true), 2);
+            } else if (!world.isReceivingRedstonePower(fromPos) && state.get(Properties.POWERED)) {
+                world.setBlockState(pos, state.with(Properties.POWERED, false), 2);
+            }
             world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
         }
     }
@@ -85,6 +93,11 @@ public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISi
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new SignalBoxEmitterBlockEntity(pos, state);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder.add(Properties.POWERED));
     }
 
     @Override

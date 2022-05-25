@@ -62,7 +62,7 @@ public final class SignalNetworking {
         ServerWorld world;
 
         if ((world = player.getWorld()) != null) {
-            server.execute(() -> world.updateNeighborsAlways(pos, world.getBlockState(pos).getBlock()));
+            server.execute(() -> world.updateNeighbors(pos, world.getBlockState(pos).getBlock()));
         }
     }
 

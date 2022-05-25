@@ -33,6 +33,11 @@ public class SignalBoxConfigurationScreen<T extends SyncableBlockEntity & ISigna
     private void addButton(int index, int x, int y, int width, @NotNull SignalMode signalMode) {
         var buttonWidget = buttonWidgets[index] = addDrawableChild(new ButtonWidget(x, y, width, 20, new TranslatableText(signalMode.getTranslationKey()), button -> setSignalMode(index, button, signalMode)));
 
+        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity && emitterBlockEntity.emittingSignalMode == signalMode) {
+            previousInactiveButtonIndex = index;
+            buttonWidget.active = false;
+        }
+
         if (blockEntity.getSignal() == signalMode) {
             previousInactiveButtonIndex = index;
             buttonWidget.active = false;

@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "rc_signal:block/signal_box_emitter"
+  "multipart": [
+    {
+      "apply": {
+        "model": "rc_signal:block/signal_box_emitter"
+      }
     }
-  }
+  ]
 }

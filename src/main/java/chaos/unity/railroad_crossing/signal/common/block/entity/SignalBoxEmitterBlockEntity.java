@@ -4,6 +4,7 @@ import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,7 @@ public class SignalBoxEmitterBlockEntity extends SyncableBlockEntity implements 
 
     @Override
     public @Nullable SignalMode getSignal(int index) {
-        return world != null && world.isReceivingRedstonePower(pos) ? emittingSignalMode : null;
+        return getCachedState().get(Properties.POWERED) ? emittingSignalMode : null;
     }
 
     @Override
