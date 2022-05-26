@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface ISignalEmitterProvider {
-    default void unbind(final World world, final BlockPos pos) {
+    default void unbindReceiver(final World world, final BlockPos pos) {
         if (world.getBlockEntity(pos) instanceof ISignalEmitter emitter) {
             var receiverOwnerPos = emitter.getReceiverPos();
 
