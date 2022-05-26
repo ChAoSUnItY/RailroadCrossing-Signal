@@ -61,14 +61,4 @@ public final class DistantSingleHeadSignalBlockEntity extends SyncableBlockEntit
             nbt.put("emitter_pos", NbtHelper.fromBlockPos(emitterPos));
         super.writeNbt(nbt);
     }
-
-    @Override
-    public @NotNull Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
-    }
 }
