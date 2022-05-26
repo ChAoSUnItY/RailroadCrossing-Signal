@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings({"deprecation"})
-public class DualHeadSignalBlock extends AbstractSignalBlock {
+public class DualHeadSignalBlock extends AbstractSignalBlock implements ISignalEmitterProvider, ISignalReceiverProvider {
     protected static final VoxelShape COLLISION_SHAPE = VoxelShapes.cuboid(.25, .0625, .25, .75, 1, .75);
     protected static final VoxelShape DEFAULT_SHAPE = VoxelShapes.cuboid(.25, .0625, .25, .75, .9375, .75);
 
@@ -104,5 +104,10 @@ public class DualHeadSignalBlock extends AbstractSignalBlock {
         } else {
             tooltip.add(new TranslatableText("tooltip.rc_signal.shift_tip").formatted(Formatting.GOLD));
         }
+    }
+
+    @Override
+    public void unbindEmitter(World world, BlockPos pos) {
+        ISignalEmitterProvider.super.unbindReceiver(world, pos);
     }
 }

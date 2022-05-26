@@ -2,7 +2,6 @@ package chaos.unity.railroad_crossing.signal.common.block;
 
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import chaos.unity.railroad_crossing.signal.common.block.entity.DistantSingleHeadSignalBlockEntity;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
@@ -32,7 +31,7 @@ public class DistantSingleHeadSignal extends SingleHeadSignalBlock implements IS
         if (newState.isOf(this))
             return;
 
-        unbind(world, pos);
+        unbindEmitter(world, pos);
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 

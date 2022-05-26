@@ -55,7 +55,7 @@ public class SignalBoxReceiverBlock extends AbstractSignalBoxBlock implements IS
         if (newState.isOf(this))
             return;
 
-        unbind(world, pos);
+        unbindEmitter(world, pos);
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
