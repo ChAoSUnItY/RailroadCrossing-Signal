@@ -77,6 +77,7 @@ public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISi
                 requireUpdate = true;
             }
 
+            // Currently, only signal box receiver would need a manual update
             if (requireUpdate && receiverPos != null && world.getBlockEntity(receiverPos) instanceof SignalBoxReceiverBlockEntity)
                 world.updateNeighborsAlways(receiverPos, this);
         }
