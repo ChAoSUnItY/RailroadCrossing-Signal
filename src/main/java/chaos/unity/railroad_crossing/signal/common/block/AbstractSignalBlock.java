@@ -37,10 +37,13 @@ public abstract class AbstractSignalBlock extends BlockWithEntity implements Wat
     }
 
     protected boolean canConnect(WorldAccess world, BlockPos pos, Direction facingDir, Direction dir) {
+        if (facingDir == dir.getOpposite() ||
+                (world.getBlockState(pos).contains(Properties.HORIZONTAL_FACING) && world.getBlockState(pos).get(Properties.HORIZONTAL_FACING) == dir))
+            return false;
         var state = world.getBlockState(pos);
         var block = state.getBlock();
         var bl2 = block instanceof FenceGateBlock && FenceGateBlock.canWallConnect(state, dir);
-        return facingDir != dir.getOpposite() && !FenceBlock.cannotConnect(state) && state.isSideSolidFullSquare(world, pos, dir) || bl2 || state.getBlock() instanceof AbstractSignalBlock;
+        return !FenceBlock.cannotConnect(state) && state.isSideSolidFullSquare(world, pos, dir) || bl2 || state.getBlock() instanceof AbstractSignalBlock;
     }
 
     @Nullable
