@@ -1,10 +1,7 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
 import chaos.unity.railroad_crossing.signal.client.screen.SignalBoxConfigurationScreen;
-import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
-import chaos.unity.railroad_crossing.signal.common.block.entity.ISyncable;
-import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxEmitterBlockEntity;
-import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.block.entity.*;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
 import chaos.unity.railroad_crossing.signal.common.item.SignalTunerItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -69,14 +66,19 @@ public class SignalBoxEmitterBlock extends AbstractSignalBoxBlock implements ISi
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
         if (world.getBlockEntity(pos) instanceof SignalBoxEmitterBlockEntity emitterBlockEntity) {
+            var requireUpdate = false;
             var receiverPos = emitterBlockEntity.getReceiverPos();
 
-            if (world.isReceivingRedstonePower(fromPos) && !state.get(Properties.POWERED)) {
+            if (world.isReceivingRedstonePower(pos) && !state.get(Properties.POWERED)) {
                 world.setBlockState(pos, state.with(Properties.POWERED, true), 2);
-            } else if (!world.isReceivingRedstonePower(fromPos) && state.get(Properties.POWERED)) {
+                requireUpdate = true;
+            } else if (!world.isReceivingRedstonePower(pos) && state.get(Properties.POWERED)) {
                 world.setBlockState(pos, state.with(Properties.POWERED, false), 2);
+                requireUpdate = true;
             }
-            world.updateNeighborsAlways(receiverPos, world.getBlockState(receiverPos).getBlock());
+
+            if (requireUpdate && receiverPos != null && world.getBlockEntity(receiverPos) instanceof SignalBoxReceiverBlockEntity)
+                world.updateNeighborsAlways(receiverPos, this);
         }
     }
 

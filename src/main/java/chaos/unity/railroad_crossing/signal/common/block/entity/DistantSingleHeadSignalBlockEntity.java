@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class DistantSingleHeadSignalBlockEntity extends BlockEntity implements ISyncable, ISignalReceiver, ISingleHeadSignal {
+public final class DistantSingleHeadSignalBlockEntity extends SyncableBlockEntity implements ISignalReceiver, ISingleHeadSignal {
     public @Nullable BlockPos emitterPos;
 
     public DistantSingleHeadSignalBlockEntity(BlockPos pos, BlockState state) {

@@ -3,6 +3,7 @@ package chaos.unity.railroad_crossing.signal.client.screen;
 import chaos.unity.railroad_crossing.signal.SignalNetworking;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalBox;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxEmitterBlockEntity;
+import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBoxReceiverBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SyncableBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -62,7 +63,9 @@ public class SignalBoxConfigurationScreen<T extends SyncableBlockEntity & ISigna
         blockEntity.setSignal(signalMode);
         blockEntity.markDirtyAndSync();
 
-        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity && emitterBlockEntity.receiverPos != null) {
+        if (blockEntity instanceof SignalBoxEmitterBlockEntity emitterBlockEntity &&
+                emitterBlockEntity.receiverPos != null &&
+                blockEntity.getWorld().getBlockEntity(emitterBlockEntity.receiverPos) instanceof SignalBoxReceiverBlockEntity) {
             var buf = PacketByteBufs.create()
                     .writeBlockPos(emitterBlockEntity.receiverPos);
 
