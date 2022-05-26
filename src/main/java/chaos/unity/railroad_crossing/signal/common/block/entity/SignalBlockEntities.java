@@ -9,6 +9,7 @@ import net.minecraft.util.registry.Registry;
 public final class SignalBlockEntities {
     public static BlockEntityType<SingleHeadSignalBlockEntity> SINGLE_HEAD_SIGNAL_BLOCK_ENTITY;
     public static BlockEntityType<DistantSingleHeadSignalBlockEntity> DISTANT_SINGLE_HEAD_SIGNAL_BLOCK_ENTITY;
+    public static BlockEntityType<DualHeadSignalBlockEntity> DUAL_HEAD_SIGNAL_BLOCK_ENTITY;
     public static BlockEntityType<SignalBoxReceiverBlockEntity> SIGNAL_BOX_RECEIVER_BLOCK_ENTITY;
     public static BlockEntityType<SignalBoxEmitterBlockEntity> SIGNAL_BOX_EMITTER_BLOCK_ENTITY;
 
@@ -22,6 +23,11 @@ public final class SignalBlockEntities {
                 Registry.BLOCK_ENTITY_TYPE,
                 new Identifier("rc_signal", "distant_single_head_signal_block_entity"),
                 FabricBlockEntityTypeBuilder.create(DistantSingleHeadSignalBlockEntity::new, SignalBlocks.DISTANT_SINGLE_HEAD_SIGNAL).build(null)
+        );
+        DUAL_HEAD_SIGNAL_BLOCK_ENTITY = Registry.register(
+                Registry.BLOCK_ENTITY_TYPE,
+                new Identifier("rc_signal", "dual_head_signal_block_entity"),
+                FabricBlockEntityTypeBuilder.create(DualHeadSignalBlockEntity::new, SignalBlocks.DUAL_HEAD_SIGNAL_BLOCK).build(null)
         );
         SIGNAL_BOX_RECEIVER_BLOCK_ENTITY = Registry.register(
                 Registry.BLOCK_ENTITY_TYPE,
