@@ -37,7 +37,7 @@ public final class DistantSingleHeadSignalBlockEntity extends SyncableBlockEntit
             return null;
 
         if (emitterPos != null && world.getBlockEntity(emitterPos) instanceof ISignalEmitter emitter) {
-            return emitter.getSignal(0);
+            return emitter.getSignal(1);
         }
 
         return ISignalReceiver.super.getReceivingSignal();
