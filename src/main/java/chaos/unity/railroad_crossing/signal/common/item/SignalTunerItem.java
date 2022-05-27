@@ -55,8 +55,43 @@ public class SignalTunerItem extends Item {
         var nbt = context.getStack().getOrCreateNbt();
         var blockEntity = world.getBlockEntity(pos);
 
+        if (blockEntity instanceof ISignalEmitter emitter && blockEntity instanceof ISignalReceiver receiver) {
+            if (nbt.contains("emitter_pos")) {
+                var originalPos = NbtHelper.toBlockPos(nbt.getCompound("emitter_pos"));
 
-        if (blockEntity instanceof ISignalEmitter emitter) {
+                if (originalPos.equals(pos)) {
+                    // Reset current session
+                    emitter.endTuningSession(null);
+                    nbt.remove("emitter_pos");
+
+                    if (world.isClient)
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_terminated").formatted(Formatting.YELLOW), false);
+                } else if (world.getBlockEntity(originalPos) instanceof ISignalEmitter signalEmitter) {
+                    // Complete current session
+                    // Unbind all tuning relatives first to prevent collision
+                    nbt.remove("emitter_pos");
+
+                    signalEmitter.endTuningSession(pos);
+                    receiver.setEmitterPos(originalPos);
+
+                    if (world.isClient)
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_success").formatted(Formatting.GREEN), false);
+                } else {
+                    // Abandon current session and create new session
+                    nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
+
+                    if (world.isClient)
+                        player.sendMessage(new TranslatableText("chat.rc_signal.tuning_restart").formatted(Formatting.YELLOW), false);
+                }
+            } else {
+                // Create a new session
+                emitter.startTuningSession();
+                nbt.put("emitter_pos", NbtHelper.fromBlockPos(pos));
+
+                if (world.isClient)
+                    player.sendMessage(new TranslatableText("chat.rc_signal.tuning_start"), false);
+            }
+        } else if (blockEntity instanceof ISignalEmitter emitter) {
             if (nbt.contains("emitter_pos")) {
                 var originalPos = NbtHelper.toBlockPos(nbt.getCompound("emitter_pos"));
 
