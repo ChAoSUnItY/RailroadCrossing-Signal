@@ -1,5 +1,6 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
+import chaos.unity.railroad_crossing.signal.common.block.entity.AbstractBlockSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.block.entity.ISignalReceiver;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SingleHeadSignalBlockEntity;
@@ -57,7 +58,7 @@ public class SingleHeadSignalBlock extends AbstractSignalBlock implements Waterl
                     }
                 }
 
-                if (world.getBlockEntity(sbe.pairedSignalPos) instanceof SingleHeadSignalBlockEntity pairedSignalBE) {
+                if (world.getBlockEntity(sbe.pairedSignalPos) instanceof AbstractBlockSignalBlockEntity pairedSignalBE) {
                     pairedSignalBE.pairedSignalPos = null;
                     pairedSignalBE.setSignalMode(SignalMode.BLINK_RED);
                 }

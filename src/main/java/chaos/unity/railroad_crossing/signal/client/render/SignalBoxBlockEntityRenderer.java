@@ -39,6 +39,7 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalBox> ex
         for (Direction dir : Direction.Type.HORIZONTAL) {
             renderSignalLight(
                     vertexConsumers.getBuffer(SignalLightRenderLayer.SIGNAL_LIGHT),
+                    0,
                     matrices.peek().getPositionMatrix(),
                     dir,
                     signal.color
@@ -49,7 +50,7 @@ public class SignalBoxBlockEntityRenderer<T extends BlockEntity & ISignalBox> ex
     }
 
     @Override
-    public float[][][] getPrecalculatedVertexes() {
+    public float[][][] getPrecalculatedVertexes(int index) {
         return PRECALCULATED_VERTEXES;
     }
 }

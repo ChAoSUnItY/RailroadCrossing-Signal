@@ -1,6 +1,7 @@
 package chaos.unity.railroad_crossing.signal;
 
 import chaos.unity.railroad_crossing.signal.client.particle.SignalParticles;
+import chaos.unity.railroad_crossing.signal.common.block.entity.AbstractBlockSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.data.Interval;
 import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
@@ -89,8 +90,8 @@ public final class SignalNetworking {
         var world = player.getEntityWorld();
 
         server.execute(() -> {
-            if (world.getBlockEntity(signalPos) instanceof SingleHeadSignalBlockEntity sbe) {
-                if (sbe.pairedSignalPos != null) {
+            if (world.getBlockEntity(signalPos) instanceof AbstractBlockSignalBlockEntity blockEntity) {
+                if (blockEntity.pairedSignalPos != null) {
                     var interval = IntervalData.getOrCreate(player.getWorld()).getBySignal(signalPos);
 
                     if (interval != null) {
@@ -100,11 +101,11 @@ public final class SignalNetworking {
 
                         responseSender.sendPacket(HIGHLIGHT_INTERVAL_INSTANCE, responseBuf);
                     }
-                } else if (sbe.railBindPos != null && world.getBlockState(sbe.railBindPos).getBlock() instanceof AbstractRailBlock) {
+                } else if (blockEntity.railBindPos != null && world.getBlockState(blockEntity.railBindPos).getBlock() instanceof AbstractRailBlock) {
                     var responseBuf = PacketByteBufs.create();
 
                     responseBuf.writeBlockPos(signalPos)
-                            .writeBlockPos(sbe.railBindPos);
+                            .writeBlockPos(blockEntity.railBindPos);
 
                     responseSender.sendPacket(HIGHLIGHT_SIGNAL, responseBuf);
                 } else {

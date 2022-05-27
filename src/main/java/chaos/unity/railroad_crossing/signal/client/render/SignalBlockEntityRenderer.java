@@ -7,10 +7,10 @@ import net.minecraft.util.math.Matrix4f;
 import java.awt.*;
 
 public abstract class SignalBlockEntityRenderer {
-    public abstract float[][][] getPrecalculatedVertexes();
+    public abstract float[][][] getPrecalculatedVertexes(int index);
 
-    protected void renderSignalLight(VertexConsumer consumer, Matrix4f matrixPos, Direction direction, Color color) {
-        var vec = getPrecalculatedVertexes()[direction.getHorizontal()];
+    protected void renderSignalLight(VertexConsumer consumer, int index, Matrix4f matrixPos, Direction direction, Color color) {
+        var vec = getPrecalculatedVertexes(index)[direction.getHorizontal()];
 
         for (var i = 0; i < 4; i++)
             consumer.vertex(matrixPos, vec[i][0], vec[i][1], vec[i][2])

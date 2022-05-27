@@ -1,8 +1,9 @@
 package chaos.unity.railroad_crossing.signal.common.block;
 
-import chaos.unity.railroad_crossing.signal.common.block.entity.DualHeadSignalBlockEntity;
-import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBlockEntities;
+import chaos.unity.railroad_crossing.signal.common.block.entity.*;
+import chaos.unity.railroad_crossing.signal.common.data.SignalMode;
 import chaos.unity.railroad_crossing.signal.common.item.SignalItems;
+import chaos.unity.railroad_crossing.signal.common.world.IntervalData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -14,6 +15,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -42,25 +44,28 @@ public class DualHeadSignalBlock extends AbstractSignalBlock implements ISignalE
             return;
 
         if (world.getBlockEntity(pos) instanceof DualHeadSignalBlockEntity blockEntity) {
-//            if (sbe.hasPaired()) {
-//                if (world instanceof ServerWorld serverWorld) {
-//                    var intervalData = IntervalData.getOrCreate(serverWorld);
-//                    var removedInterval = intervalData.removeBySignal(pos);
-//
-//                    if (removedInterval != null) {
-//                        intervalData.markDirty();
-//                        removedInterval.unbindAllRelatives(serverWorld);
-//                    }
-//                }
-//
-//                if (world.getBlockEntity(sbe.pairedSignalPos) instanceof SingleHeadSignalBlockEntity pairedSignalBE) {
-//                    pairedSignalBE.pairedSignalPos = null;
-//                    pairedSignalBE.setSignalMode(SignalMode.BLINK_RED);
-//                }
-//            }
-//            if (sbe.receiverPos != null && world.getBlockEntity(sbe.receiverPos) instanceof ISignalReceiver receiver) {
-//                receiver.setEmitterPos(null);
-//            }
+            if (blockEntity.hasPaired()) {
+                if (world instanceof ServerWorld serverWorld) {
+                    var intervalData = IntervalData.getOrCreate(serverWorld);
+                    var removedInterval = intervalData.removeBySignal(pos);
+
+                    if (removedInterval != null) {
+                        intervalData.markDirty();
+                        removedInterval.unbindAllRelatives(serverWorld);
+                    }
+                }
+
+                if (world.getBlockEntity(blockEntity.pairedSignalPos) instanceof AbstractBlockSignalBlockEntity pairedSignalBE) {
+                    pairedSignalBE.pairedSignalPos = null;
+                    pairedSignalBE.setSignalMode(SignalMode.BLINK_RED);
+                }
+            }
+            if (blockEntity.receiverPos != null && world.getBlockEntity(blockEntity.receiverPos) instanceof ISignalReceiver receiver) {
+                receiver.setEmitterPos(null);
+            }
+            if (blockEntity.emitterPos != null && world.getBlockEntity(blockEntity.emitterPos) instanceof ISignalEmitter emitter) {
+                emitter.setReceiverPos(null);
+            }
         }
         super.onStateReplaced(state, world, pos, newState, moved);
     }

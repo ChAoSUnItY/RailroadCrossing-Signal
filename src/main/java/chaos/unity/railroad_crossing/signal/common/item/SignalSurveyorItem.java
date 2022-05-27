@@ -1,5 +1,6 @@
 package chaos.unity.railroad_crossing.signal.common.item;
 
+import chaos.unity.railroad_crossing.signal.common.block.entity.AbstractBlockSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.data.Interval;
 import chaos.unity.railroad_crossing.signal.common.itemgroup.SignalItemGroups;
@@ -55,11 +56,11 @@ public class SignalSurveyorItem extends Item {
         var world = context.getWorld();
         var nbt = context.getStack().getOrCreateNbt();
 
-        if (world.getBlockEntity(pos) instanceof SingleHeadSignalBlockEntity currentSignalBE) {
+        if (world.getBlockEntity(pos) instanceof AbstractBlockSignalBlockEntity currentSignalBE) {
             if (nbt.contains("signal_pos")) {
                 var originalPos = NbtHelper.toBlockPos(nbt.getCompound("signal_pos"));
 
-                if (world.getBlockEntity(originalPos) instanceof SingleHeadSignalBlockEntity originalSignalBE) {
+                if (world.getBlockEntity(originalPos) instanceof AbstractBlockSignalBlockEntity originalSignalBE) {
                     if (originalPos.equals(pos)) {
                         // Reset current session
                         originalSignalBE.endSurveySession(null);

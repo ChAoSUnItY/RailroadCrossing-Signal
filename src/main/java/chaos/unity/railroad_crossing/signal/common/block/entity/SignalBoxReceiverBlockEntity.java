@@ -23,11 +23,11 @@ public class SignalBoxReceiverBlockEntity extends SyncableBlockEntity implements
     }
 
     @Override
-    public void setEmitterPos(@Nullable BlockPos receivingOwnerPos) {
+    public void setEmitterPos(@Nullable BlockPos emitterPos) {
         if (world == null)
             return;
 
-        this.emitterPos = receivingOwnerPos;
+        this.emitterPos = emitterPos;
 
         markDirtyAndSync();
         world.updateNeighborsAlways(getPos(), world.getBlockState(getPos()).getBlock());

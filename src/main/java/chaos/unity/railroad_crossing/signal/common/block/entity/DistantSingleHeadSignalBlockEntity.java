@@ -25,8 +25,8 @@ public final class DistantSingleHeadSignalBlockEntity extends SyncableBlockEntit
     }
 
     @Override
-    public void setEmitterPos(@Nullable BlockPos receivingOwnerPos) {
-        this.emitterPos = receivingOwnerPos;
+    public void setEmitterPos(@Nullable BlockPos emitterPos) {
+        this.emitterPos = emitterPos;
 
         markDirtyAndSync();
     }

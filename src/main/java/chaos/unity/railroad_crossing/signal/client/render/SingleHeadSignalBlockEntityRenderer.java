@@ -39,6 +39,7 @@ public class SingleHeadSignalBlockEntityRenderer<T extends BlockEntity & ISingle
 
         renderSignalLight(
                 vertexConsumers.getBuffer(SignalLightRenderLayer.SIGNAL_LIGHT),
+                0,
                 matrices.peek().getPositionMatrix(),
                 entity.getCachedState().get(Properties.HORIZONTAL_FACING),
                 entity.getSignal().color
@@ -48,7 +49,7 @@ public class SingleHeadSignalBlockEntityRenderer<T extends BlockEntity & ISingle
     }
 
     @Override
-    public float[][][] getPrecalculatedVertexes() {
+    public float[][][] getPrecalculatedVertexes(int index) {
         return PRECALCULATED_VERTEXES;
     }
 }

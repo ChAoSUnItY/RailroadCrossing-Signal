@@ -1,8 +1,10 @@
 package chaos.unity.railroad_crossing.signal.client;
 
 import chaos.unity.railroad_crossing.signal.SignalNetworking;
+import chaos.unity.railroad_crossing.signal.client.render.DualHeadSignalBlockEntityRenderer;
 import chaos.unity.railroad_crossing.signal.client.render.SignalBoxBlockEntityRenderer;
 import chaos.unity.railroad_crossing.signal.client.render.SingleHeadSignalBlockEntityRenderer;
+import chaos.unity.railroad_crossing.signal.common.block.entity.AbstractBlockSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SignalBlockEntities;
 import chaos.unity.railroad_crossing.signal.common.block.entity.SingleHeadSignalBlockEntity;
 import chaos.unity.railroad_crossing.signal.common.item.SignalSurveyorItem;
@@ -29,6 +31,7 @@ public class SignalClient implements ClientModInitializer {
     private void registerBlockEntityRenderer() {
         BlockEntityRendererRegistry.register(SignalBlockEntities.SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(SignalBlockEntities.DISTANT_SINGLE_HEAD_SIGNAL_BLOCK_ENTITY, SingleHeadSignalBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(SignalBlockEntities.DUAL_HEAD_SIGNAL_BLOCK_ENTITY, DualHeadSignalBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_RECEIVER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(SignalBlockEntities.SIGNAL_BOX_EMITTER_BLOCK_ENTITY, SignalBoxBlockEntityRenderer::new);
     }
@@ -46,7 +49,7 @@ public class SignalClient implements ClientModInitializer {
             if (hitResult instanceof BlockHitResult blockHitResult) {
                 var targetPos = blockHitResult.getBlockPos();
 
-                if (world.getBlockEntity(targetPos) instanceof SingleHeadSignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof SignalSurveyorItem) {
+                if (world.getBlockEntity(targetPos) instanceof AbstractBlockSignalBlockEntity sbe && player.getStackInHand(player.getActiveHand()).getItem() instanceof SignalSurveyorItem) {
                     var buf = PacketByteBufs.create();
                     buf.writeBlockPos(sbe.getPos());
                     ClientPlayNetworking.send(SignalNetworking.REQUEST_HIGHLIGHT_SIGNALS, buf);

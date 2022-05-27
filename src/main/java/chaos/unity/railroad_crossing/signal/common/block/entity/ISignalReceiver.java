@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ISignalReceiver {
     @Nullable BlockPos getEmitterPos();
 
-    void setEmitterPos(@Nullable BlockPos receivingOwnerPos);
+    void setEmitterPos(@Nullable BlockPos emitterPos);
 
     default @Nullable SignalMode getReceivingSignal() {
         return SignalMode.BLINK_RED;
