@@ -38,7 +38,7 @@ public abstract class AbstractSignalBlock extends BlockWithEntity implements Wat
 
     protected boolean canConnect(WorldAccess world, BlockPos pos, Direction facingDir, Direction dir) {
         if (facingDir == dir.getOpposite() ||
-                (world.getBlockState(pos).contains(Properties.HORIZONTAL_FACING) && world.getBlockState(pos).get(Properties.HORIZONTAL_FACING) == dir))
+                (world.getBlockState(pos).getBlock() instanceof AbstractSignalBlock && world.getBlockState(pos).get(Properties.HORIZONTAL_FACING) == dir))
             return false;
         var state = world.getBlockState(pos);
         var block = state.getBlock();
