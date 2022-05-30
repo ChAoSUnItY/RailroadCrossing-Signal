@@ -26,6 +26,7 @@
   "tooltip.rc_signal.signal_tuner.line1": "用作綁定信號發送器至信號接收器。",
   "tooltip.rc_signal.single_head_signal.line1": "信號發送器，發送所屬號誌區間的狀態信號。",
   "tooltip.rc_signal.distant_single_head_signal.line1": "信號接收器，顯示綁定的信號發送器的信號。",
+  "tooltip.rc_signal.dual_head_signal.line1": "信號發送/接收器，區間/預告組合而成的號誌。",
   "tooltip.rc_signal.signal_box_receiver.line1": "信號接收器，接受信號為預期信號時將充能。",
   "tooltip.rc_signal.signal_box_emitter.line1": "信號發送器，充能時發送信號。",
   "item.rc_signal.signal_surveyor": "信號域監測儀",
